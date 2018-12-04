@@ -371,6 +371,8 @@ void BlockchainDB::fixup()
     LOG_PRINT_L1("Database is opened read only - skipping fixup check");
     return;
   }
+  set_batch_transactions(true);
+  /*
 
   // There was a bug that would cause key images for transactions without
   // any outputs to not be added to the spent key image set. There are two
@@ -947,6 +949,7 @@ void BlockchainDB::fixup()
     }
   }
   batch_stop();
+  */
 }
 
 }  // namespace cryptonote
