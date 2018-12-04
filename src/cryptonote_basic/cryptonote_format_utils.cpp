@@ -1168,6 +1168,8 @@ namespace cryptonote
         return true;
     }
 
+    return get_object_hash(get_block_hashing_blob(b), res);
+    /*
     // EXCEPTION FOR BLOCK 202612
     const std::string correct_blob_hash_202612 = "3a8a2b3a29b50fc86ff73dd087ea43c6f0d6b8f936c849194d5c84c737903966";
     const std::string existing_block_id_202612 = "bbd604d2ba11ba27935e006ed39c9bfdd99b76bf4a50654bc1e1e61217962698";
@@ -1189,6 +1191,7 @@ namespace cryptonote
       }
     }
     return hash_result;
+    */
   }
   //---------------------------------------------------------------
   bool get_block_hash(const block& b, crypto::hash& res)
@@ -1220,6 +1223,7 @@ namespace cryptonote
   //---------------------------------------------------------------
   bool get_block_longhash(const block& b, crypto::hash& res, uint64_t height)
   {
+    /*
     // block 202612 bug workaround
     if (height == 202612)
     {
@@ -1227,6 +1231,7 @@ namespace cryptonote
       string_tools::hex_to_pod(longhash_202612, res);
       return true;
     }
+    */
     blobdata bd = get_block_hashing_blob(b);
     const int cn_variant = b.major_version >= 7 ? b.major_version - 6 : 0;
     crypto::cn_slow_hash(bd.data(), bd.size(), res, cn_variant, height);
