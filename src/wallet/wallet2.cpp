@@ -4387,7 +4387,7 @@ crypto::secret_key wallet2::generate(const std::string& wallet_, const epee::wip
  {
    // -1 month for fluctuations in block time and machine date/time setup.
    // avg seconds per block
-   const int seconds_per_block = DIFFICULTY_TARGET_V2;
+   const int seconds_per_block = DIFFICULTY_TARGET;
    // ~num blocks per month
    const uint64_t blocks_per_month = 60*60*24*30/seconds_per_block;
 
@@ -5841,8 +5841,7 @@ bool wallet2::is_tx_spendtime_unlocked(uint64_t unlock_time, uint64_t block_heig
     uint64_t current_time = static_cast<uint64_t>(time(NULL));
     // XXX: this needs to be fast, so we'd need to get the starting heights
     // from the daemon to be correct once voting kicks in
-    uint64_t v2height = m_nettype == TESTNET ? 624634 : m_nettype == STAGENET ? 32000  : 1009827;
-    uint64_t leeway = block_height < v2height ? CRYPTONOTE_LOCKED_TX_ALLOWED_DELTA_SECONDS_V1 : CRYPTONOTE_LOCKED_TX_ALLOWED_DELTA_SECONDS_V2;
+    uint64_t leeway = CRYPTONOTE_LOCKED_TX_ALLOWED_DELTA_SECONDS;
     if(current_time + leeway >= unlock_time)
       return true;
     else
@@ -7614,9 +7613,54 @@ void wallet2::get_outs(std::vector<std::vector<tools::wallet2::get_outs_entry>> 
     COMMAND_RPC_GET_OUTPUTS_BIN::request req = AUTO_VAL_INIT(req);
     COMMAND_RPC_GET_OUTPUTS_BIN::response daemon_resp = AUTO_VAL_INIT(daemon_resp);
 
-    std::unique_ptr<gamma_picker> gamma;
-    if (has_rct_distribution)
-      gamma.reset(new gamma_picker(rct_offsets));
+    struct gamma_engine
+    {
+      typedef uint64_t result_type;
+      static constexpr result_type min() { return 0; }
+      static constexpr result_type max() { return std::numeric_limits<result_type>::max(); }
+      result_type operator()() { return crypto::rand<result_type>(); }
+    } engine;
+    static const double shape = 19.28/*16.94*/;
+    //static const double shape = m_testnet ? 17.02 : 17.28;
+    static const double scale = 1/1.61;
+    std::gamma_distribution<double> gamma(shape, scale);
+    auto pick_gamma = [&]()
+    {
+      double x = gamma(engine);
+      x = exp(x);
+      uint64_t block_offset = x / DIFFICULTY_TARGET; // this assumes constant target over the whole rct range
+      if (block_offset >= rct_offsets.size() - 1)
+        return std::numeric_limits<uint64_t>::max(); // bad pick
+      block_offset = rct_offsets.size() - 2 - block_offset;
+      THROW_WALLET_EXCEPTION_IF(block_offset >= rct_offsets.size() - 1, error::wallet_internal_error, "Bad offset calculation");
+      THROW_WALLET_EXCEPTION_IF(rct_offsets[block_offset + 1] < rct_offsets[block_offset],
+          error::get_output_distribution, "Decreasing offsets in rct distribution: " +
+          std::to_string(block_offset) + ": " + std::to_string(rct_offsets[block_offset]) + ", " +
+          std::to_string(block_offset + 1) + ": " + std::to_string(rct_offsets[block_offset + 1]));
+      uint64_t first_block_offset = block_offset, last_block_offset = block_offset;
+      for (size_t half_window = 0; half_window < GAMMA_PICK_HALF_WINDOW; ++half_window)
+      {
+        // end when we have a non empty block
+        uint64_t cum0 = first_block_offset > 0 ? rct_offsets[first_block_offset] - rct_offsets[first_block_offset - 1] : rct_offsets[0];
+        if (cum0 > 1)
+          break;
+        uint64_t cum1 = last_block_offset > 0 ? rct_offsets[last_block_offset] - rct_offsets[last_block_offset - 1] : rct_offsets[0];
+        if (cum1 > 1)
+          break;
+        if (first_block_offset == 0 && last_block_offset >= rct_offsets.size() - 2)
+          break;
+        // expand up to bounds
+        if (first_block_offset > 0)
+          --first_block_offset;
+        if (last_block_offset < rct_offsets.size() - 1)
+          ++last_block_offset;
+      }
+      const uint64_t n_rct = rct_offsets[last_block_offset] - (first_block_offset == 0 ? 0 : rct_offsets[first_block_offset - 1]);
+      if (n_rct == 0)
+        return rct_offsets[block_offset] ? rct_offsets[block_offset] - 1 : 0;
+      MDEBUG("Picking 1/" << n_rct << " in " << (last_block_offset - first_block_offset + 1) << " blocks centered around " << block_offset);
+      return rct_offsets[first_block_offset] + crypto::rand<uint64_t>() % n_rct;
+    };
 
     size_t num_selected_transfers = 0;
     for(size_t idx: selected_transfers)
@@ -11340,18 +11384,11 @@ uint64_t wallet2::get_daemon_blockchain_target_height(string &err)
 
 uint64_t wallet2::get_approximate_blockchain_height() const
 {
-  // time of v2 fork
-  const time_t fork_time = m_nettype == TESTNET ? 1448285909 : m_nettype == STAGENET ? 1520937818 : 1458748658;
-  // v2 fork block
-  const uint64_t fork_block = m_nettype == TESTNET ? 624634 : m_nettype == STAGENET ? 32000 : 1009827;
   // avg seconds per block
-  const int seconds_per_block = DIFFICULTY_TARGET_V2;
+  const int seconds_per_block = DIFFICULTY_TARGET;
   // Calculated blockchain height
-  uint64_t approx_blockchain_height = fork_block + (time(NULL) - fork_time)/seconds_per_block;
+  uint64_t approx_blockchain_height = time(NULL)/seconds_per_block;
   // testnet got some huge rollbacks, so the estimation is way off
-  static const uint64_t approximate_testnet_rolled_back_blocks = 303967;
-  if (m_nettype == TESTNET && approx_blockchain_height > approximate_testnet_rolled_back_blocks)
-    approx_blockchain_height -= approximate_testnet_rolled_back_blocks;
   LOG_PRINT_L2("Calculated blockchain height: " << approx_blockchain_height);
   return approx_blockchain_height;
 }
