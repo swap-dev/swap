@@ -119,16 +119,16 @@ int main(int argc, char const * argv[])
 
     if (command_line::get_arg(vm, command_line::arg_help))
     {
-      std::cout << "Monero '" << MONERO_RELEASE_NAME << "' (v" << MONERO_VERSION_FULL << ")" << ENDL << ENDL;
+      std::cout << "Swap '" << MONERO_RELEASE_NAME << "' (v" << MONERO_VERSION_FULL << ")" << ENDL << ENDL;
       std::cout << "Usage: " + std::string{argv[0]} + " [options|settings] [daemon_command...]" << std::endl << std::endl;
       std::cout << visible_options << std::endl;
       return 0;
     }
 
-    // Monero Version
+    // Swap Version
     if (command_line::get_arg(vm, command_line::arg_version))
     {
-      std::cout << "Monero '" << MONERO_RELEASE_NAME << "' (v" << MONERO_VERSION_FULL << ")" << ENDL;
+      std::cout << "Swap '" << MONERO_RELEASE_NAME << "' (v" << MONERO_VERSION_FULL << ")" << ENDL;
       return 0;
     }
 
