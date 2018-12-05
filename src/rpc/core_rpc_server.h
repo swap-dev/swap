@@ -227,6 +227,8 @@ private:
     template <typename COMMAND_TYPE>
     bool use_bootstrap_daemon_if_necessary(const invoke_http_mode &mode, const std::string &command_name, const typename COMMAND_TYPE::request& req, typename COMMAND_TYPE::response& res, bool &r);
     
+	cn_pow_hash_v3 m_pow_ctx;
+
     core& m_core;
     nodetool::node_server<cryptonote::t_cryptonote_protocol_handler<cryptonote::core> >& m_p2p;
     std::string m_bootstrap_daemon_address;

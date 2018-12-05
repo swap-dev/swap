@@ -1046,7 +1046,7 @@ namespace cryptonote
     return p;
   }
   //---------------------------------------------------------------
-  bool get_block_longhash(const block& b, crypto::hash& res, uint64_t height)
+  bool get_block_longhash(const block& b, cn_pow_hash_v3 &ctx, crypto::hash& res)
   {
     /*
     // block 202612 bug workaround
@@ -1058,8 +1058,7 @@ namespace cryptonote
     }
     */
     blobdata bd = get_block_hashing_blob(b);
-    const int cn_variant = b.major_version >= 7 ? b.major_version - 6 : 0;
-    crypto::cn_slow_hash(bd.data(), bd.size(), res, cn_variant);
+    ctx.hash(bd.data(), bd.size(), res.data);
     return true;
   }
   //---------------------------------------------------------------
@@ -1083,10 +1082,10 @@ namespace cryptonote
     return res;
   }
   //---------------------------------------------------------------
-  crypto::hash get_block_longhash(const block& b, uint64_t height)
+  crypto::hash get_block_longhash(const block& b, cn_pow_hash_v3 &ctx)
   {
     crypto::hash p = null_hash;
-    get_block_longhash(b, p, height);
+    get_block_longhash(b, ctx, p);
     return p;
   }
   //---------------------------------------------------------------
