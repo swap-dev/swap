@@ -871,6 +871,7 @@ void slow_hash_free_state(void)
  */
 void cn_slow_hash(const void *data, size_t length, char *hash, int variant, int prehashed, uint64_t height)
 {
+  	assert(variant == 0);
     RDATA_ALIGN16 uint8_t expandedKey[240];  /* These buffers are aligned to use later with SSE functions */
 
     uint8_t text[INIT_SIZE_BYTE];
@@ -1248,6 +1249,7 @@ STATIC INLINE void aligned_free(void *ptr)
 
 void cn_slow_hash(const void *data, size_t length, char *hash, int variant, int prehashed, uint64_t height)
 {
+    assert(variant == 0);
     RDATA_ALIGN16 uint8_t expandedKey[240];
 
 #ifndef FORCE_USE_HEAP
@@ -1464,6 +1466,7 @@ STATIC INLINE void xor_blocks(uint8_t* a, const uint8_t* b)
 
 void cn_slow_hash(const void *data, size_t length, char *hash, int variant, int prehashed, uint64_t height)
 {
+    assert(variant == 0);
     uint8_t text[INIT_SIZE_BYTE];
     uint8_t a[AES_BLOCK_SIZE];
     uint8_t a1[AES_BLOCK_SIZE];
@@ -1668,6 +1671,7 @@ union cn_slow_hash_state {
 #pragma pack(pop)
 
 void cn_slow_hash(const void *data, size_t length, char *hash, int variant, int prehashed, uint64_t height) {
+  assert(variant == 0);
 #ifndef FORCE_USE_HEAP
   uint8_t long_state[MEMORY];
 #else
