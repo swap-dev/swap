@@ -6176,29 +6176,19 @@ int wallet2::get_fee_algorithm() const
   // changes at v3, v5, v8
   if (use_fork_rules(HF_VERSION_PER_BYTE_FEE, 0))
     return 3;
-  if (use_fork_rules(5, 0))
-    return 2;
-  if (use_fork_rules(3, -720 * 14))
-   return 1;
-  return 0;
+  return 2;
 }
 //------------------------------------------------------------------------------------------------------------------------------
 uint64_t wallet2::get_min_ring_size() const
 {
-  if (use_fork_rules(8, 10))
+  if (use_fork_rules(HF_VERSION_MIN_MIXIN_10, 10))
     return 11;
-  if (use_fork_rules(7, 10))
-    return 7;
-  if (use_fork_rules(6, 10))
-    return 5;
-  if (use_fork_rules(2, 10))
-    return 3;
-  return 2;
+  return 10;
 }
 //------------------------------------------------------------------------------------------------------------------------------
 uint64_t wallet2::get_max_ring_size() const
 {
-  if (use_fork_rules(8, 10))
+  if (use_fork_rules(HF_VERSION_MIN_MIXIN_10, 10))
     return 11;
   return 0;
 }
