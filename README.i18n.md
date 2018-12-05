@@ -39,9 +39,7 @@ To build translations after modifying them:
 
 To test a translation:
 
-```bash
-LANG=es ./build/release/bin/monero-wallet-cli
-```
+    LANG=es ./build/release/bin/swap-wallet-cli
 
 To add new translatable strings in the source code:
 
