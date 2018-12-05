@@ -211,7 +211,7 @@ invokes cmake commands as needed.
 
 * Add `PATH="$PATH:$HOME/monero/build/release/bin"` to `.profile`
 
-* Run Monero with `monerod --detach`
+* Run Monero with `swapd --detach`
 
 * **Optional**: build and run the test suite to verify the binaries:
 
@@ -266,7 +266,7 @@ Tested on a Raspberry Pi Zero with a clean install of minimal Raspbian Stretch (
 
 * Add `PATH="$PATH:$HOME/monero/build/release/bin"` to `.profile`
 
-* Run Monero with `monerod --detach`
+* Run Monero with `swapd --detach`
 
 * You may wish to reduce the size of the swap file after the build has finished, and delete the boost directory from your home directory
 
@@ -500,13 +500,13 @@ Then you can run make as usual.
 ### On Linux for Android (using docker):
 
         # Build image (for ARM 32-bit)
-        docker build -f utils/build_scripts/android32.Dockerfile -t monero-android .
+        docker build -f utils/build_scripts/android32.Dockerfile -t swap-android .
         # Build image (for ARM 64-bit)
-        docker build -f utils/build_scripts/android64.Dockerfile -t monero-android .
+        docker build -f utils/build_scripts/android64.Dockerfile -t swap-android .
         # Create container
-        docker create -it --name monero-android monero-android bash
+        docker create -it --name swap-android swap-android bash
         # Get binaries
-        docker cp monero-android:/src/build/release/bin .
+        docker cp swap-android:/src/build/release/bin .
 
 ### Building portable statically linked binaries
 
@@ -581,15 +581,15 @@ Installing a snap is very quick. Snaps are secure. They are isolated with all of
 
 Packaging for your favorite distribution would be a welcome contribution!
 
-## Running monerod
+## Running swapd
 
 The build places the binary in `bin/` sub-directory within the build directory
 from which cmake was invoked (repository root by default). To run in
 foreground:
 
-    ./bin/monerod
+    ./bin/swapd
 
-To list all available options, run `./bin/monerod --help`.  Options can be
+To list all available options, run `./bin/swapd --help`.  Options can be
 specified either on the command line or in a configuration file passed by the
 `--config-file` argument.  To specify an option in the configuration file, add
 a line with the syntax `argumentname=value`, where `argumentname` is the name
@@ -597,17 +597,17 @@ of the argument without the leading dashes, for example `log-level=1`.
 
 To run in background:
 
-    ./bin/monerod --log-file monerod.log --detach
+    ./bin/swapd --log-file swapd.log --detach
 
 To run as a systemd service, copy
-[monerod.service](utils/systemd/monerod.service) to `/etc/systemd/system/` and
-[monerod.conf](utils/conf/monerod.conf) to `/etc/`. The [example
-service](utils/systemd/monerod.service) assumes that the user `monero` exists
+[swapd.service](utils/systemd/swapd.service) to `/etc/systemd/system/` and
+[swapd.conf](utils/conf/swapd.conf) to `/etc/`. The [example
+service](utils/systemd/swapd.service) assumes that the user `monero` exists
 and its home is the data directory specified in the [example
-config](utils/conf/monerod.conf).
+config](utils/conf/swapd.conf).
 
 If you're on Mac, you may need to add the `--max-concurrency 1` option to
-monero-wallet-cli, and possibly monerod, if you get crashes refreshing.
+swap-wallet-cli, and possibly swapd, if you get crashes refreshing.
 
 ## Internationalization
 
@@ -625,27 +625,27 @@ While Monero isn't made to integrate with Tor, it can be used wrapped with torso
 setting the following configuration parameters and environment variables:
 
 * `--p2p-bind-ip 127.0.0.1` on the command line or `p2p-bind-ip=127.0.0.1` in
-  monerod.conf to disable listening for connections on external interfaces.
-* `--no-igd` on the command line or `no-igd=1` in monerod.conf to disable IGD
+  swapd.conf to disable listening for connections on external interfaces.
+* `--no-igd` on the command line or `no-igd=1` in swapd.conf to disable IGD
   (UPnP port forwarding negotiation), which is pointless with Tor.
 * `DNS_PUBLIC=tcp` or `DNS_PUBLIC=tcp://x.x.x.x` where x.x.x.x is the IP of the
   desired DNS server, for DNS requests to go over TCP, so that they are routed
-  through Tor. When IP is not specified, monerod uses the default list of
+  through Tor. When IP is not specified, swapd uses the default list of
   servers defined in [src/common/dns_utils.cpp](src/common/dns_utils.cpp).
-* `TORSOCKS_ALLOW_INBOUND=1` to tell torsocks to allow monerod to bind to interfaces
+* `TORSOCKS_ALLOW_INBOUND=1` to tell torsocks to allow swapd to bind to interfaces
    to accept connections from the wallet. On some Linux systems, torsocks
    allows binding to localhost by default, so setting this variable is only
    necessary to allow binding to local LAN/VPN interfaces to allow wallets to
    connect from remote hosts. On other systems, it may be needed for local wallets
    as well.
 * Do NOT pass `--detach` when running through torsocks with systemd, (see
-  [utils/systemd/monerod.service](utils/systemd/monerod.service) for details).
+  [utils/systemd/swapd.service](utils/systemd/swapd.service) for details).
 * If you use the wallet with a Tor daemon via the loopback IP (eg, 127.0.0.1:9050),
   then use `--untrusted-daemon` unless it is your own hidden service.
 
-Example command line to start monerod through Tor:
+Example command line to start swapd through Tor:
 
-    DNS_PUBLIC=tcp torsocks monerod --p2p-bind-ip 127.0.0.1 --no-igd
+    DNS_PUBLIC=tcp torsocks swapd --p2p-bind-ip 127.0.0.1 --no-igd
 
 ### Using Tor on Tails
 
@@ -654,7 +654,7 @@ to add a rule to allow this connection too, in addition to telling torsocks to
 allow inbound connections. Full example:
 
     sudo iptables -I OUTPUT 2 -p tcp -d 127.0.0.1 -m tcp --dport 18081 -j ACCEPT
-    DNS_PUBLIC=tcp torsocks ./monerod --p2p-bind-ip 127.0.0.1 --no-igd --rpc-bind-ip 127.0.0.1 \
+    DNS_PUBLIC=tcp torsocks ./swapd --p2p-bind-ip 127.0.0.1 --no-igd --rpc-bind-ip 127.0.0.1 \
         --data-dir /home/amnesia/Persistent/your/directory/to/the/blockchain
 
 ## Debugging
@@ -672,7 +672,7 @@ Run the build.
 Once it stalls, enter the following command:
 
 ```
-gdb /path/to/monerod `pidof monerod`
+gdb /path/to/swapd `pidof swapd`
 ```
 
 Type `thread apply all bt` within gdb in order to obtain the stack trace
@@ -685,21 +685,21 @@ Enter `echo core | sudo tee /proc/sys/kernel/core_pattern` to stop cores from be
 
 Run the build.
 
-When it terminates with an output along the lines of "Segmentation fault (core dumped)", there should be a core dump file in the same directory as monerod. It may be named just `core`, or `core.xxxx` with numbers appended.
+When it terminates with an output along the lines of "Segmentation fault (core dumped)", there should be a core dump file in the same directory as swapd. It may be named just `core`, or `core.xxxx` with numbers appended.
 
 You can now analyse this core dump with `gdb` as follows:
 
-`gdb /path/to/monerod /path/to/dumpfile`
+`gdb /path/to/swapd /path/to/dumpfile`
 
 Print the stack trace with `bt`
 
 * To run monero within gdb:
 
-Type `gdb /path/to/monerod`
+Type `gdb /path/to/swapd`
 
 Pass command-line options with `--args` followed by the relevant arguments
 
-Type `run` to run monerod
+Type `run` to run swapd
 
 ### Analysing memory corruption
 
@@ -715,7 +715,7 @@ You can then run the monero tools normally. Performance will typically halve.
 
 * valgrind
 
-Install valgrind and run as `valgrind /path/to/monerod`. It will be very slow.
+Install valgrind and run as `valgrind /path/to/swapd`. It will be very slow.
 
 ### LMDB
 
