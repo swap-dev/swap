@@ -29,6 +29,8 @@
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
 
+#define __STDC_FORMAT_MACROS
+#include <inttypes.h>
 #include "wallet.h"
 #include "pending_transaction.h"
 #include "unsigned_transaction.h"
