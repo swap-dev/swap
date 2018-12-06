@@ -47,6 +47,7 @@ typedef crypto::hash chash;
 PUSH_WARNINGS
 DISABLE_VS_WARNINGS(4297)
 extern "C" {
+  static cn_pow_hash_v3 m_pow_ctx;
   static void hash_tree(const void *data, size_t length, char *hash) {
     if ((length & 31) != 0) {
       throw ios_base::failure("Invalid input length for tree_hash");
@@ -56,11 +57,8 @@ extern "C" {
   static void cn_slow_hash_0(const void *data, size_t length, char *hash) {
     return cn_slow_hash(data, length, hash, 0/*variant*/, 0/*prehashed*/);
   }
-  static void cn_slow_hash_1(const void *data, size_t length, char *hash) {
-    return cn_slow_hash(data, length, hash, 1/*variant*/, 0/*prehashed*/);
-  }
-  static void cn_slow_hash_2(const void *data, size_t length, char *hash) {
-    return cn_slow_hash(data, length, hash, 2/*variant*/, 0/*prehashed*/);
+  static void cn_slow_hash_sf(const void *data, size_t length, char *hash) {
+    return m_pow_ctx.hash(data, length, hash);
   }
 }
 POP_WARNINGS
@@ -72,7 +70,7 @@ struct hash_func {
 } hashes[] = {{"fast", cn_fast_hash}, {"slow", cn_slow_hash_0}, {"tree", hash_tree},
   {"extra-blake", hash_extra_blake}, {"extra-groestl", hash_extra_groestl},
   {"extra-jh", hash_extra_jh}, {"extra-skein", hash_extra_skein},
-  {"slow-1", cn_slow_hash_1}, {"slow-2", cn_slow_hash_2}};
+  {"slow-sf", cn_slow_hash_sf}};
 
 int test_variant2_int_sqrt();
 int test_variant2_int_sqrt_ref();

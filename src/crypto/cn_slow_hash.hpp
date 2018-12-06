@@ -128,41 +128,27 @@ private:
 	void* base_ptr;
 };
 
-template<size_t MEMORY, size_t ITER, size_t VERSION> class cn_slow_hash;
-using cn_pow_hash_v1 = cn_slow_hash<2*1024*1024, 0x80000, 0>;
-using cn_pow_hash_v2 = cn_slow_hash<4*1024*1024, 0x40000, 1>;
-using cn_pow_hash_v3 = cn_slow_hash<2*1024*1024, 0x20000, 2>;
+template<size_t MEMORY, size_t ITER, size_t VERSION> class cn_slow_hash_t;
+using cn_pow_hash_v3 = cn_slow_hash_t<2*1024*1024, 0x20000, 2>;
 
 
 template<size_t MEMORY, size_t ITER, size_t VERSION>
-class cn_slow_hash
+class cn_slow_hash_t
 {
 public:
-	cn_slow_hash() : borrowed_pad(false)
+	cn_slow_hash_t() : borrowed_pad(false)
 	{
 		lpad.set(boost::alignment::aligned_alloc(4096, MEMORY));
 		spad.set(boost::alignment::aligned_alloc(4096, 4096));
 	}
 
-	cn_slow_hash (cn_slow_hash&& other) noexcept : lpad(other.lpad.as_byte()), spad(other.spad.as_byte()), borrowed_pad(other.borrowed_pad)
+	cn_slow_hash_t (cn_slow_hash_t&& other) noexcept : lpad(other.lpad.as_byte()), spad(other.spad.as_byte()), borrowed_pad(other.borrowed_pad)
 	{
 		other.lpad.set(nullptr);
 		other.spad.set(nullptr);
 	}
 
-	// Factory function enabling to temporaliy turn v2 object into v1
-	// It is caller's responsibility to ensure that v2 object is not hashing at the same time!!
-	static cn_pow_hash_v1 make_borrowed_v1(cn_pow_hash_v3& t)
-	{
-		return cn_pow_hash_v1(t.lpad.as_void(), t.spad.as_void());
-	}
-
-	static cn_pow_hash_v2 make_borrowed_v2(cn_pow_hash_v3& t)
-	{
-		return cn_pow_hash_v2(t.lpad.as_void(), t.spad.as_void());
-	}
-
-	cn_slow_hash& operator= (cn_slow_hash&& other) noexcept
+	cn_slow_hash_t& operator= (cn_slow_hash_t&& other) noexcept
     {
 		if(this == &other)
 			return *this;
@@ -175,10 +161,10 @@ public:
 	}
 
 	// Copying is going to be really inefficient
-	cn_slow_hash(const cn_slow_hash& other) = delete;
-	cn_slow_hash& operator= (const cn_slow_hash& other) = delete;
+	cn_slow_hash_t(const cn_slow_hash_t& other) = delete;
+	cn_slow_hash_t& operator= (const cn_slow_hash_t& other) = delete;
 
-	~cn_slow_hash()
+	~cn_slow_hash_t()
 	{
 		free_mem();
 	}
@@ -201,12 +187,10 @@ public:
 
 private:
 	static constexpr size_t MASK = ((MEMORY-1) >> 4) << 4;
-	friend cn_pow_hash_v1;
-	friend cn_pow_hash_v2;
 	friend cn_pow_hash_v3;
 
 	// Constructor enabling v1 hash to borrow v2's buffer
-	cn_slow_hash(void* lptr, void* sptr)
+	cn_slow_hash_t(void* lptr, void* sptr)
 	{
 		lpad.set(lptr);
 		spad.set(sptr);
@@ -259,7 +243,5 @@ private:
 	bool borrowed_pad;
 };
 
-extern template class cn_slow_hash<2*1024*1024, 0x80000, 0>;
-extern template class cn_slow_hash<4*1024*1024, 0x40000, 1>;
-extern template class cn_slow_hash<2*1024*1024, 0x20000, 2>;
+extern template class cn_slow_hash_t<2*1024*1024, 0x20000, 2>;
 
