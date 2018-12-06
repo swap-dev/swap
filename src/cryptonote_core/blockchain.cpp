@@ -103,7 +103,10 @@ static const struct {
   time_t time;
 } testnet_hard_forks[] = {
   // version 1 from the start of the blockchain
-  { 1, 1, 0, 1341378000 },
+  { 1, 1, 0, 1542228716 },
+  { 2, 100, 0, 1542438717 },
+  { 3, 150, 0, 1542548718 },
+  { 9, 250, 0, 1542648718 }
 };
 
 static const struct {
