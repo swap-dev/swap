@@ -1,19 +1,19 @@
 [Unit]
-Description=Monero Full Node
+Description=Swap Full Node
 After=network.target
 
 [Service]
-User=monero
-Group=monero
+User=swap
+Group=swap
 WorkingDirectory=~
-RuntimeDirectory=monero
+RuntimeDirectory=swap
 
 # Clearnet config
 #
 Type=forking
 PIDFile=/run/swap/swapd.pid
 ExecStart=/usr/bin/swapd --config-file /etc/swapd.conf \
-    --detach --pidfile /run/monero/swapd.pid
+    --detach --pidfile /run/swap/swapd.pid
 
 # Tor config
 #
