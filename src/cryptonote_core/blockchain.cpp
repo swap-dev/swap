@@ -90,9 +90,11 @@ static const struct {
   time_t time;
 } mainnet_hard_forks[] = {
   // version 1 from the start of the blockchain
-  { 1, 1, 0, 1542228716 },
-  { 2, 100, 0, 1542238717 },
-  { 3, 150, 0, 1542248718 }
+  { 1, 1       , 0, 1542228716 },
+  { 2, 100     , 0, 1542238717 },
+  { 3, 150     , 0, 1542248718 },
+  { 8, 150000  , 0, 1545317008 },
+  { 9, 151000  , 0, 1545332008 }
 
   // version 10 starts from block 1788000, which is on or around the 9th of March, 2019. Fork time finalised on 2019-02-10.
   { 10, 1788000, 0, 1549792439 },
