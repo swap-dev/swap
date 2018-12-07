@@ -358,7 +358,7 @@ static std::string get_fork_extra_info(uint64_t t, uint64_t now, uint64_t block_
   if (t > now)
   {
     uint64_t dblocks = t - now;
-    if (dblocks <= 30)
+    if (dblocks <= 200)
       return (boost::format(" (next fork in %u blocks)") % (unsigned)dblocks).str();
     if (dblocks <= blocks_per_day / 2)
       return (boost::format(" (next fork in %.1f hours)") % (dblocks / (float)(blocks_per_day / 24))).str();
