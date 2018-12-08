@@ -21,5 +21,5 @@ clone repo:
 
 build daemon and wallet:
 
-`cd swap && mkdir build && cd build && cmake .. && make daemon simplewallet`
+`cd swap && mkdir build && cd build && cmake .. && make -j4 daemon simplewallet`
 
