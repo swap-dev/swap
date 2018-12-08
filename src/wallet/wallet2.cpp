@@ -11343,7 +11343,7 @@ std::string wallet2::make_uri(const std::string &address, const std::string &pay
 bool wallet2::parse_uri(const std::string &uri, std::string &address, std::string &payment_id, uint64_t &amount, std::string &tx_description, std::string &recipient_name, std::vector<std::string> &unknown_parameters, std::string &error)
 {
   if (uri.substr(0, 5) != "swap:")
-  { monero
+  {
     error = std::string("URI has wrong scheme (expected \"swap:\"): ") + uri;
     return false;
   }
