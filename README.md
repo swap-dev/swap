@@ -1,6 +1,6 @@
-# swoop
+# Swoop
 
-swoop (previously known as Freehaven) is based on [Monero](README_original.md)  
+Swoop is based on [Monero]/Swap (README_original.md)  
 
 ## Resources
 
