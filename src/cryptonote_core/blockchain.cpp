@@ -118,7 +118,8 @@ static const struct {
   time_t time;
 } stagenet_hard_forks[] = {
   // version 1 from the start of the blockchain
-  { 1, 1, 0, 1341378000 },
+  { 1 , 1, 0, 1341378000 },
+  { 10, 2, 0, 1341478000 }
 };
 
 //------------------------------------------------------------------
