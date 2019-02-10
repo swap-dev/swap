@@ -88,13 +88,14 @@ static const struct {
   uint64_t height;
   uint8_t threshold;
   time_t time;
+  difficulty_type diff_reset_value;
 } mainnet_hard_forks[] = {
   // version 1 from the start of the blockchain
-  { 1, 1       , 0, 1542228716 },
-  { 2, 100     , 0, 1542238717 },
-  { 3, 150     , 0, 1542248718 },
-  { 8, 150000  , 0, 1545317008 },
-  { 9, 151000  , 0, 1545332008 }
+  { 1, 1       , 0, 1542228716, 0 },
+  { 2, 100     , 0, 1542238717, 0 },
+  { 3, 150     , 0, 1542248718, 0 },
+  { 8, 150000  , 0, 1545317008, 0 },
+  { 9, 151000  , 0, 1545332008, 0 }
 };
 
 static const struct {
@@ -102,9 +103,13 @@ static const struct {
   uint64_t height;
   uint8_t threshold;
   time_t time;
+  difficulty_type diff_reset_value;
 } testnet_hard_forks[] = {
   // version 1 from the start of the blockchain
-  { 1, 1, 0, 1341378000 },
+  { 1, 1, 0, 1542228716, 0 },
+  { 2, 100, 0, 1542438717, 0 },
+  { 3, 150, 0, 1542548718, 0 },
+  { 9, 250, 0, 1542648718, 0 }
 };
 
 static const struct {
@@ -112,10 +117,11 @@ static const struct {
   uint64_t height;
   uint8_t threshold;
   time_t time;
+  difficulty_type diff_reset_value;
 } stagenet_hard_forks[] = {
   // version 1 from the start of the blockchain
-  { 1 , 1, 0, 1341378000 },
-  { 10, 2, 0, 1341478000 }
+  { 1  , 1, 0, 1341378000, 0 },
+  { 10 , 2, 0, 1341478000, 0 }
 };
 
 //------------------------------------------------------------------
@@ -340,17 +346,17 @@ bool Blockchain::init(BlockchainDB* db, const network_type nettype, bool offline
   else if (m_nettype == TESTNET)
   {
     for (size_t n = 0; n < sizeof(testnet_hard_forks) / sizeof(testnet_hard_forks[0]); ++n)
-      m_hardfork->add_fork(testnet_hard_forks[n].version, testnet_hard_forks[n].height, testnet_hard_forks[n].threshold, testnet_hard_forks[n].time);
+      m_hardfork->add_fork(testnet_hard_forks[n].version, testnet_hard_forks[n].height, testnet_hard_forks[n].threshold, testnet_hard_forks[n].time, testnet_hard_forks[n].diff_reset_value);
   }
   else if (m_nettype == STAGENET)
   {
     for (size_t n = 0; n < sizeof(stagenet_hard_forks) / sizeof(stagenet_hard_forks[0]); ++n)
-      m_hardfork->add_fork(stagenet_hard_forks[n].version, stagenet_hard_forks[n].height, stagenet_hard_forks[n].threshold, stagenet_hard_forks[n].time);
+      m_hardfork->add_fork(stagenet_hard_forks[n].version, stagenet_hard_forks[n].height, stagenet_hard_forks[n].threshold, stagenet_hard_forks[n].time, stagenet_hard_forks[n].diff_reset_value);
   }
   else
   {
     for (size_t n = 0; n < sizeof(mainnet_hard_forks) / sizeof(mainnet_hard_forks[0]); ++n)
-      m_hardfork->add_fork(mainnet_hard_forks[n].version, mainnet_hard_forks[n].height, mainnet_hard_forks[n].threshold, mainnet_hard_forks[n].time);
+      m_hardfork->add_fork(mainnet_hard_forks[n].version, mainnet_hard_forks[n].height, mainnet_hard_forks[n].threshold, mainnet_hard_forks[n].time, mainnet_hard_forks[n].diff_reset_value);
   }
   m_hardfork->init();
 
@@ -871,7 +877,9 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
     m_difficulties = difficulties;
   }
   size_t target = get_difficulty_target();
-  difficulty_type diff = next_difficulty(timestamps, difficulties, target);
+  uint64_t last_diff_reset_height = m_hardfork->get_last_diff_reset_height(height);
+  difficulty_type last_diff_reset_value = m_hardfork->get_last_diff_reset_value(height);
+  difficulty_type diff = next_difficulty(timestamps, difficulties, target, height, last_diff_reset_height, last_diff_reset_value);
 
   CRITICAL_REGION_LOCAL1(m_difficulty_lock);
   m_difficulty_for_next_block_top_hash = top_hash;
@@ -1097,7 +1105,9 @@ difficulty_type Blockchain::get_next_difficulty_for_alternative_chain(const std:
   }
 
   // calculate the difficulty target for the block and return it
-  return next_difficulty(timestamps, cumulative_difficulties, DIFFICULTY_TARGET);
+  uint64_t last_diff_reset_height = m_hardfork->get_last_diff_reset_height(bei.height);
+  difficulty_type last_diff_reset_value = m_hardfork->get_last_diff_reset_value(bei.height);
+  return next_difficulty(timestamps, cumulative_difficulties, DIFFICULTY_TARGET, bei.height, last_diff_reset_height, last_diff_reset_value);
 }
 //------------------------------------------------------------------
 // This function does a sanity check on basic things that all miner
@@ -4384,21 +4394,21 @@ const std::vector<HardFork::Params>& Blockchain::get_hard_fork_heights(network_t
   {
     std::vector<HardFork::Params> heights;
     for (const auto& i : mainnet_hard_forks)
-      heights.emplace_back(i.version, i.height, i.threshold, i.time);
+      heights.emplace_back(i.version, i.height, i.threshold, i.time, i.diff_reset_value);
     return heights;
   }();
   static const std::vector<HardFork::Params> testnet_heights = []()
   {
     std::vector<HardFork::Params> heights;
     for (const auto& i : testnet_hard_forks)
-      heights.emplace_back(i.version, i.height, i.threshold, i.time);
+      heights.emplace_back(i.version, i.height, i.threshold, i.time, i.diff_reset_value);
     return heights;
   }();
   static const std::vector<HardFork::Params> stagenet_heights = []()
   {
     std::vector<HardFork::Params> heights;
     for (const auto& i : stagenet_hard_forks)
-      heights.emplace_back(i.version, i.height, i.threshold, i.time);
+      heights.emplace_back(i.version, i.height, i.threshold, i.time, i.diff_reset_value);
     return heights;
   }();
   static const std::vector<HardFork::Params> dummy;
