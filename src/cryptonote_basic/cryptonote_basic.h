@@ -353,6 +353,7 @@ namespace cryptonote
     uint64_t timestamp;
     crypto::hash  prev_id;
     uint32_t nonce;
+    uint32_t cycle01,cycle02,cycle03,cycle04,cycle05,cycle06,cycle07,cycle08,cycle09,cycle10,cycle11,cycle12,cycle13,cycle14,cycle15,cycle16,cycle17,cycle18,cycle19,cycle20,cycle21,cycle22,cycle23,cycle24,cycle25,cycle26,cycle27,cycle28,cycle29,cycle30,cycle31,cycle32;
 
     BEGIN_SERIALIZE()
       VARINT_FIELD(major_version)
@@ -360,6 +361,41 @@ namespace cryptonote
       VARINT_FIELD(timestamp)
       FIELD(prev_id)
       FIELD(nonce)
+      if (major_version >= HF_VERSION_CUCKOO)
+      {
+        FIELD(cycle01)
+        FIELD(cycle02)
+        FIELD(cycle03)
+        FIELD(cycle04)
+        FIELD(cycle05)
+        FIELD(cycle06)
+        FIELD(cycle07)
+        FIELD(cycle08)
+        FIELD(cycle09)
+        FIELD(cycle10)
+        FIELD(cycle11)
+        FIELD(cycle12)
+        FIELD(cycle13)
+        FIELD(cycle14)
+        FIELD(cycle15)
+        FIELD(cycle16)
+        FIELD(cycle17)
+        FIELD(cycle18)
+        FIELD(cycle19)
+        FIELD(cycle20)
+        FIELD(cycle21)
+        FIELD(cycle22)
+        FIELD(cycle23)
+        FIELD(cycle24)
+        FIELD(cycle25)
+        FIELD(cycle26)
+        FIELD(cycle27)
+        FIELD(cycle28)
+        FIELD(cycle29)
+        FIELD(cycle30)
+        FIELD(cycle31)
+        FIELD(cycle32)
+      }
     END_SERIALIZE()
   };
 
