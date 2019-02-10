@@ -38,6 +38,9 @@
 #include "crypto/crypto.h"
 #include "crypto/hash.h"
 #include "ringct/rctSigs.h"
+extern "C" {
+#include "crypto/cuckaroo/cuckaroo29s.h"
+}
 
 using namespace epee;
 
@@ -1098,7 +1101,19 @@ namespace cryptonote
   //---------------------------------------------------------------
   blobdata get_block_hashing_blob(const block& b)
   {
-    blobdata blob = t_serializable_object_to_blob(static_cast<block_header>(b));
+    blobdata blob;
+  
+  	if(b.major_version < HF_VERSION_CUCKOO)
+	{
+		blob = t_serializable_object_to_blob(static_cast<block_header>(b));
+	}
+	else
+	{
+		blob = t_serializable_object_to_blob(b.major_version);
+		blob.append(reinterpret_cast<const char*>(&b.minor_version), sizeof(b.minor_version));
+		blob.append(reinterpret_cast<const char*>(&b.timestamp), sizeof(b.timestamp));
+		blob.append(reinterpret_cast<const char*>(&b.prev_id), sizeof(b.prev_id));
+	}
     crypto::hash tree_root_hash = get_tx_tree_hash(b);
     blob.append(reinterpret_cast<const char*>(&tree_root_hash), sizeof(tree_root_hash));
     blob.append(tools::get_varint_data(b.tx_hashes.size()+1));
@@ -1174,7 +1189,49 @@ namespace cryptonote
     }
     */
     blobdata bd = get_block_hashing_blob(b);
-    ctx.hash(bd.data(), bd.size(), res.data);
+
+	if (b.major_version >= HF_VERSION_CUCKOO)
+	{
+		uint32_t edges[32];
+		edges[0]=b.cycle01;
+		edges[1]=b.cycle02;
+		edges[2]=b.cycle03;
+		edges[3]=b.cycle04;
+		edges[4]=b.cycle05;
+		edges[5]=b.cycle06;
+		edges[6]=b.cycle07;
+		edges[7]=b.cycle08;
+		edges[8]=b.cycle09;
+		edges[9]=b.cycle10;
+		edges[10]=b.cycle11;
+		edges[11]=b.cycle12;
+		edges[12]=b.cycle13;
+		edges[13]=b.cycle14;
+		edges[14]=b.cycle15;
+		edges[15]=b.cycle16;
+		edges[16]=b.cycle17;
+		edges[17]=b.cycle18;
+		edges[18]=b.cycle19;
+		edges[19]=b.cycle20;
+		edges[20]=b.cycle21;
+		edges[21]=b.cycle22;
+		edges[22]=b.cycle23;
+		edges[23]=b.cycle24;
+		edges[24]=b.cycle25;
+		edges[25]=b.cycle26;
+		edges[26]=b.cycle27;
+		edges[27]=b.cycle28;
+		edges[28]=b.cycle29;
+		edges[29]=b.cycle30;
+		edges[30]=b.cycle31;
+		edges[31]=b.cycle32;
+
+		cuckaroo29s(bd.data(), bd.size(),b.nonce, edges, res.data);
+	}
+	else
+	{
+		ctx.hash(bd.data(), bd.size(), res.data);
+	}
     return true;
   }
   //---------------------------------------------------------------

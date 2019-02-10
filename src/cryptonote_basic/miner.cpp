@@ -484,6 +484,12 @@ namespace cryptonote
         continue;
       }
 
+      if (b.major_version >= HF_VERSION_CUCKOO)
+      {
+        miner::send_stop_signal();
+        continue;
+      }
+
       b.nonce = nonce;
       crypto::hash h;
       get_block_longhash(b, hash_ctx, h);

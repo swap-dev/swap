@@ -340,12 +340,22 @@ bool t_rpc_command_executor::show_difficulty() {
   return true;
 }
 
-static std::string get_mining_speed(uint64_t hr)
+static std::string get_mining_speed(uint64_t hr, uint16_t hf)
 {
-  if (hr>1e9) return (boost::format("%.2f GH/s") % (hr/1e9)).str();
-  if (hr>1e6) return (boost::format("%.2f MH/s") % (hr/1e6)).str();
-  if (hr>1e3) return (boost::format("%.2f kH/s") % (hr/1e3)).str();
-  return (boost::format("%.0f H/s") % hr).str();
+  if(hf >= HF_VERSION_CUCKOO)
+  {
+    if (hr>1e9) return (boost::format("%.2f Ggps") % (hr/1e9)).str();
+    if (hr>1e6) return (boost::format("%.2f Mgps") % (hr/1e6)).str();
+    if (hr>1e3) return (boost::format("%.2f kgps") % (hr/1e3)).str();
+    return (boost::format("%.0f gps") % hr).str();
+  }
+  else
+  {
+    if (hr>1e9) return (boost::format("%.2f GH/s") % (hr/1e9)).str();
+    if (hr>1e6) return (boost::format("%.2f MH/s") % (hr/1e6)).str();
+    if (hr>1e3) return (boost::format("%.2f kH/s") % (hr/1e3)).str();
+    return (boost::format("%.0f H/s") % hr).str();
+  }
 }
 
 static std::string get_fork_extra_info(uint64_t t, uint64_t now, uint64_t block_time)
@@ -461,8 +471,8 @@ bool t_rpc_command_executor::show_status() {
     % get_sync_percentage(ires)
     % (ires.testnet ? "testnet" : ires.stagenet ? "stagenet" : "mainnet")
     % bootstrap_msg
-    % (!has_mining_info ? "mining info unavailable" : mining_busy ? "syncing" : mres.active ? ( ( mres.is_background_mining_enabled ? "smart " : "" ) + std::string("mining at ") + get_mining_speed(mres.speed) + std::string(" to ") + mres.address ) : "not mining")
-    % get_mining_speed(ires.difficulty / ires.target)
+    % (hfres.version >= HF_VERSION_CUCKOO ? "cuckaroo29s" : (!has_mining_info ? "mining info unavailable" : mining_busy ? "syncing" : mres.active ? ( ( mres.is_background_mining_enabled ? "smart " : "" ) + std::string("mining at ") + get_mining_speed(mres.speed) + std::string(" to ") + mres.address ) : "not mining")
+    % get_mining_speed(hfres.version >= HF_VERSION_CUCKOO ? (ires.difficulty * 32 / ires.target) : (ires.difficulty / ires.target), hfres.version)
     % (unsigned)hfres.version
     % get_fork_extra_info(hfres.earliest_height, net_height, ires.target)
     % (hfres.state == cryptonote::HardFork::Ready ? "up to date" : hfres.state == cryptonote::HardFork::UpdateNeeded ? "update needed" : "out of date, likely forked")
