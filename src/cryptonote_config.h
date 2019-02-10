@@ -136,6 +136,7 @@
 
 #define HF_VERSION_MIN_MIXIN_10                 8
 #define HF_VERSION_PER_BYTE_FEE                 8
+#define HF_VERSION_CUCKOO                       10
 #define HF_VERSION_SMALLER_BP                   10
 #define HF_VERSION_LONG_TERM_BLOCK_WEIGHT       10
 
