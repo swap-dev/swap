@@ -27,7 +27,7 @@ class Cuckaroo29S
 	void hash24(const uint64_t);
 	uint64_t xor_lanes(void);
 	uint64_t sipblock(siphash_keys*, const uint32_t,uint64_t*);
-	verify(uint32_t *, siphash_keys*);
+	int verify(uint32_t *, siphash_keys*);
 	Cuckaroo29S();
 
 	int hash(const void* in, size_t len,uint32_t nonce,uint32_t *edges,void* out);
