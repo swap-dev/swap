@@ -106,10 +106,11 @@ static const struct {
   difficulty_type diff_reset_value;
 } testnet_hard_forks[] = {
   // version 1 from the start of the blockchain
-  { 1, 1, 0, 1542228716, 0 },
-  { 2, 100, 0, 1542438717, 0 },
-  { 3, 150, 0, 1542548718, 0 },
-  { 9, 250, 0, 1542648718, 0 }
+  {  1,     1,  0, 1542228716, 0 },
+  {  2,   100,  0, 1542438717, 0 },
+  {  3,   150,  0, 1542548718, 0 },
+  {  9,   250,  0, 1542648718, 0 },
+  { 10, 52000, 51, 1549934499, 1 }
 };
 
 static const struct {
