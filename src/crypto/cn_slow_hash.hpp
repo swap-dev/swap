@@ -37,6 +37,7 @@
 #include <assert.h>
 #include <string.h>
 #include <boost/align/aligned_alloc.hpp>
+#include "cuckaroo/cuckaroo29s.h"
 
 #if defined(_WIN32) || defined(_WIN64)
 #include <malloc.h>
@@ -190,6 +191,10 @@ public:
 		else
 			software_hash(in, len, out);
 	}
+	void hashc29(const void* in, size_t len,uint32_t nonce,uint32_t *edges,void* out)
+	{
+		cu->hash(in,len,nonce,edges,out);
+	}
 
 	void software_hash(const void* in, size_t len, void* out);
 
@@ -204,6 +209,7 @@ private:
 	friend cn_pow_hash_v1;
 	friend cn_pow_hash_v2;
 	friend cn_pow_hash_v3;
+	Cuckaroo29S* cu = new Cuckaroo29S();
 
 	// Constructor enabling v1 hash to borrow v2's buffer
 	cn_slow_hash(void* lptr, void* sptr)
