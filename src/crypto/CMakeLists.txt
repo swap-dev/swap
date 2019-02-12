@@ -27,7 +27,7 @@
 # THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 set(crypto_sources
-  cuckaroo/cuckaroo29s.c
+  cuckaroo/cuckaroo29s.cpp
   cuckaroo/blake2b-ref.c
   aesb.c
   blake256.c
