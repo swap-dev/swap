@@ -320,11 +320,40 @@ bool t_rpc_command_executor::show_difficulty() {
     }
   }
 
-  tools::success_msg_writer() <<   "BH: " << res.height
-                              << ", TH: " << res.top_block_hash
-                              << ", DIFF: " << res.difficulty
-                              << ", HR: " << res.difficulty / res.target << " H/s";
+  cryptonote::COMMAND_RPC_HARD_FORK_INFO::request hfreq;
+  cryptonote::COMMAND_RPC_HARD_FORK_INFO::response hfres;
+  epee::json_rpc::error error_resp;
 
+  hfreq.version = 0;
+  if (m_is_rpc)
+  {
+    if (!m_rpc_client->json_rpc_request(hfreq, hfres, "hard_fork_info", fail_message.c_str()))
+    {
+      return true;
+    }
+  }
+  else
+  {
+    if (!m_rpc_server->on_hard_fork_info(hfreq, hfres, error_resp) || hfres.status != CORE_RPC_STATUS_OK)
+    {
+      tools::fail_msg_writer() << make_error(fail_message, hfres.status);
+      return true;
+    }
+  }
+  if(hfres.version >= HF_VERSION_CUCKOO)
+  {
+    tools::success_msg_writer() <<   "BH: " << res.height
+                                << ", TH: " << res.top_block_hash
+                                << ", DIFF: " << res.difficulty
+                                << ", GR: " << res.difficulty * 32 / res.target << " gps";
+  }
+  else
+  {
+    tools::success_msg_writer() <<   "BH: " << res.height
+                                << ", TH: " << res.top_block_hash
+                                << ", DIFF: " << res.difficulty
+                                << ", HR: " << res.difficulty / res.target << " H/s";
+  }
   return true;
 }
 
