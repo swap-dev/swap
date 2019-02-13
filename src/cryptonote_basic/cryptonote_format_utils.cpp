@@ -1187,48 +1187,14 @@ namespace cryptonote
     */
     blobdata bd = get_block_hashing_blob(b);
 
-	if (b.major_version >= HF_VERSION_CUCKOO)
-	{
-		uint32_t edges[32];
-		edges[0]=b.cycle01;
-		edges[1]=b.cycle02;
-		edges[2]=b.cycle03;
-		edges[3]=b.cycle04;
-		edges[4]=b.cycle05;
-		edges[5]=b.cycle06;
-		edges[6]=b.cycle07;
-		edges[7]=b.cycle08;
-		edges[8]=b.cycle09;
-		edges[9]=b.cycle10;
-		edges[10]=b.cycle11;
-		edges[11]=b.cycle12;
-		edges[12]=b.cycle13;
-		edges[13]=b.cycle14;
-		edges[14]=b.cycle15;
-		edges[15]=b.cycle16;
-		edges[16]=b.cycle17;
-		edges[17]=b.cycle18;
-		edges[18]=b.cycle19;
-		edges[19]=b.cycle20;
-		edges[20]=b.cycle21;
-		edges[21]=b.cycle22;
-		edges[22]=b.cycle23;
-		edges[23]=b.cycle24;
-		edges[24]=b.cycle25;
-		edges[25]=b.cycle26;
-		edges[26]=b.cycle27;
-		edges[27]=b.cycle28;
-		edges[28]=b.cycle29;
-		edges[29]=b.cycle30;
-		edges[30]=b.cycle31;
-		edges[31]=b.cycle32;
-
-		ctx.hashc29(bd.data(), bd.size(),b.nonce, edges, res.data);
-	}
-	else
-	{
-		ctx.hash(bd.data(), bd.size(), res.data);
-	}
+    if (b.major_version >= HF_VERSION_CUCKOO) {
+        uint32_t edges[32];
+        for(int i = 0; i < 32; i++) edges[i] = b.cycle.data[i];
+        ctx.hashc29(bd.data(), bd.size(),b.nonce, edges, res.data);
+    }
+    else{
+        ctx.hash(bd.data(), bd.size(), res.data);
+    }
     return true;
   }
   //---------------------------------------------------------------
