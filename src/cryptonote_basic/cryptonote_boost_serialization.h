@@ -189,38 +189,7 @@ namespace boost
     a & b.nonce;
     if (b.major_version >= HF_VERSION_CUCKOO)
     {
-      a & b.cycle01;
-      a & b.cycle02;
-      a & b.cycle03;
-      a & b.cycle04;
-      a & b.cycle05;
-      a & b.cycle06;
-      a & b.cycle07;
-      a & b.cycle08;
-      a & b.cycle09;
-      a & b.cycle10;
-      a & b.cycle11;
-      a & b.cycle12;
-      a & b.cycle13;
-      a & b.cycle14;
-      a & b.cycle15;
-      a & b.cycle16;
-      a & b.cycle17;
-      a & b.cycle18;
-      a & b.cycle19;
-      a & b.cycle20;
-      a & b.cycle21;
-      a & b.cycle22;
-      a & b.cycle23;
-      a & b.cycle24;
-      a & b.cycle25;
-      a & b.cycle26;
-      a & b.cycle27;
-      a & b.cycle28;
-      a & b.cycle29;
-      a & b.cycle30;
-      a & b.cycle31;
-      a & b.cycle32;
+      a & b.cycle;
     }
     //------------------
     a & b.miner_tx;
