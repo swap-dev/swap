@@ -44,6 +44,8 @@ message(STATUS "CMake version ${CMAKE_VERSION}")
 
 project(monero)
 
+enable_language(C ASM)
+
 function (die msg)
   if (NOT WIN32)
     string(ASCII 27 Esc)
@@ -428,6 +430,8 @@ if (UNIX AND NOT APPLE)
   # Note that at the time of this writing the -Wstrict-prototypes flag added below will make this fail
   set(THREADS_PREFER_PTHREAD_FLAG ON)
   find_package(Threads)
+  add_c_flag_if_supported(-pthread CMAKE_C_FLAGS)
+  add_cxx_flag_if_supported(-pthread CMAKE_CXX_FLAGS)
 endif()
 
 # Handle OpenSSL, used for sha256sum on binary updates and light wallet ssl http
