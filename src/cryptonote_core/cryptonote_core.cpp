@@ -1747,7 +1747,7 @@ namespace cryptonote
       return true;
     }
 
-    static constexpr double threshold = 1. / (864000 / DIFFICULTY_TARGET_V2); // one false positive every 10 days
+    static constexpr double threshold = 1. / (864000 / DIFFICULTY_TARGET); // one false positive every 10 days
 
     const time_t now = time(NULL);
     const std::vector<time_t> timestamps = m_blockchain_storage.get_last_block_timestamps(60);
@@ -1757,7 +1757,7 @@ namespace cryptonote
     {
       unsigned int b = 0;
       for (time_t ts: timestamps) b += ts >= (time_t)(now - seconds[n]);
-      const double p = probability(b, seconds[n] / DIFFICULTY_TARGET_V2);
+      const double p = probability(b, seconds[n] / DIFFICULTY_TARGET);
       MDEBUG("blocks in the last " << seconds[n] / 60 << " minutes: " << b << " (probability " << p << ")");
       if (p < threshold)
       {
@@ -1766,7 +1766,7 @@ namespace cryptonote
         std::shared_ptr<tools::Notify> block_rate_notify = m_block_rate_notify;
         if (block_rate_notify)
         {
-          auto expected = seconds[n] / DIFFICULTY_TARGET_V2;
+          auto expected = seconds[n] / DIFFICULTY_TARGET;
           block_rate_notify->notify("%t", std::to_string(seconds[n] / 60).c_str(), "%b", std::to_string(b).c_str(), "%e", std::to_string(expected).c_str(), NULL);
         }
 
