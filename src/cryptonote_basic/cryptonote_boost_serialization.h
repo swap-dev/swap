@@ -190,6 +190,10 @@ namespace boost
     a & b.minor_version;
     a & b.timestamp;
     a & b.prev_id;
+    if (b.major_version >= HF_VERSION_NONCE8)
+    {
+      a & b.nonce8;
+    }
     a & b.nonce;
     if (b.major_version >= HF_VERSION_CUCKOO)
     {

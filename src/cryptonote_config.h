@@ -134,6 +134,7 @@
 #define HF_VERSION_CUCKOO                       10
 #define HF_VERSION_LONG_TERM_BLOCK_WEIGHT       11
 #define HF_VERSION_SMALLER_BP                   11
+#define HF_VERSION_NONCE8                       11
 
 #define PER_KB_FEE_QUANTIZATION_DECIMALS        8
 
