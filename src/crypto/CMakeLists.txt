@@ -47,9 +47,14 @@ set(crypto_sources
   random.c
   skein.c
   slow-hash.c
-  tree-hash.c
   cn_slow_hash_soft.cpp
-  cn_slow_hash_hard_intel.cpp) 
+  cn_slow_hash_hard_intel.cpp
+  CryptonightR_JIT.c
+  tree-hash.c)
+
+if(ARCH_ID STREQUAL "i386" OR ARCH_ID STREQUAL "x86_64" OR ARCH_ID STREQUAL "x86-64")
+list(APPEND crypto_sources CryptonightR_template.S)
+endif()
 
 set(crypto_headers)
 
@@ -76,7 +81,9 @@ set(crypto_private_headers
   random.h
   skein.h
   skein_port.h
-  cn_slow_hash.hpp)
+  cn_slow_hash.hpp
+  CryptonightR_JIT.h
+  CryptonightR_template.h)
 
 monero_private_headers(cncrypto
   ${crypto_private_headers})
@@ -111,4 +118,5 @@ if (ANDROID OR IOS)
   endif()
 endif()
 
-
+# cheat because cmake and ccache hate each other
+set_property(SOURCE CryptonightR_template.S PROPERTY LANGUAGE C)
