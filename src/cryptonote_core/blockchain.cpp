@@ -122,8 +122,9 @@ static const struct {
   difficulty_type diff_reset_value;
 } stagenet_hard_forks[] = {
   // version 1 from the start of the blockchain
-  { 1  , 1, 0, 1341378000, 0 },
-  { 10 , 2, 0, 1341478000, 0 }
+  { 1  ,      1, 0, 1341378000, 0 },
+  { 10 ,      2, 0, 1341478000, 0 },
+  { 11 ,  21200, 0, 1551820225, 0 }
 };
 
 //------------------------------------------------------------------
