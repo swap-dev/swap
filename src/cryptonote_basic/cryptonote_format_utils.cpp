@@ -1222,7 +1222,13 @@ namespace cryptonote
     if (b.major_version >= HF_VERSION_CUCKOO) {
         uint32_t edges[32];
         for(int i = 0; i < 32; i++) edges[i] = b.cycle.data[i];
-        ctx.hashc29(bd.data(), bd.size(),b.nonce, edges, res.data);
+
+        if (b.major_version >= HF_VERSION_NONCE8) {
+            ctx.hashc29(bd.data(), bd.size(), b.nonce8, b.nonce, edges, res.data);
+        }
+        else{
+            ctx.hashc29(bd.data(), bd.size(), b.nonce, edges, res.data);
+        }
     }
     else{
         ctx.hash(bd.data(), bd.size(), res.data);
