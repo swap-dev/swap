@@ -618,12 +618,12 @@ int main(int argc, char* argv[])
       cryptonote::block block;
       if (core_storage[0]->get_block_by_hash(hash, block))
       {
-        if (block.major_version < 10)
+        if (block.major_version < HF_VERSION_SMALLER_BP)
         {
           time_t now = time(NULL);
           if (now < 1555286400) // 15 april 2019
           {
-            MERROR("Pruning before v10 will confuse peers. Wait for v10 first");
+            MERROR("Pruning before HF_VERSION_SMALLER_BP will confuse peers. Wait for HF_VERSION_SMALLER_BP first");
             return 1;
           }
         }
