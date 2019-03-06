@@ -195,7 +195,7 @@ public:
 	{
 		cu->hash(in,len,nonce,edges,out);
 	}
-	void hashc29(const void* in, size_t len, uint32_t nonce8, uint32_t nonce, uint32_t *edges, void* out)
+	void hashc29(const void* in, size_t len, uint64_t nonce8, uint32_t nonce, uint32_t *edges, void* out)
 	{
 		cu->hash(in,len,nonce8,nonce,edges,out);
 	}
