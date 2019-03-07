@@ -6641,14 +6641,14 @@ int wallet2::get_fee_algorithm() const
 //------------------------------------------------------------------------------------------------------------------------------
 uint64_t wallet2::get_min_ring_size() const
 {
-  if (use_fork_rules(HF_VERSION_MIN_MIXIN_10, 10))
+  if (use_fork_rules(HF_VERSION_MIN_MIXIN_10, 0))
     return 11;
   return 10;
 }
 //------------------------------------------------------------------------------------------------------------------------------
 uint64_t wallet2::get_max_ring_size() const
 {
-  if (use_fork_rules(HF_VERSION_MIN_MIXIN_10, 10))
+  if (use_fork_rules(HF_VERSION_MIN_MIXIN_10, 0))
     return 11;
   return 0;
 }
@@ -9680,7 +9680,7 @@ uint64_t wallet2::get_upper_transaction_weight_limit() const
   if (m_upper_transaction_weight_limit > 0)
     return m_upper_transaction_weight_limit;
   uint64_t full_reward_zone = CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE;
-  if (use_fork_rules(8, 10))
+  if (use_fork_rules(HF_VERSION_PER_BYTE_FEE, 0))
     return full_reward_zone / 2 - CRYPTONOTE_COINBASE_BLOB_RESERVED_SIZE;
   else
     return full_reward_zone - CRYPTONOTE_COINBASE_BLOB_RESERVED_SIZE;
@@ -9801,9 +9801,7 @@ std::vector<size_t> wallet2::select_available_mixable_outputs()
 //----------------------------------------------------------------------------------------------------
 std::vector<wallet2::pending_tx> wallet2::create_unmixable_sweep_transactions()
 {
-  // From hard fork 1, we don't consider small amounts to be dust anymore
-  const bool hf1_rules = use_fork_rules(2, 10); // first hard fork has version 2
-  tx_dust_policy dust_policy(hf1_rules ? 0 : ::config::DEFAULT_DUST_THRESHOLD);
+  tx_dust_policy dust_policy(::config::DEFAULT_DUST_THRESHOLD);
 
   const uint64_t base_fee  = get_base_fee();
 
