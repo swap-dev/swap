@@ -31,7 +31,6 @@ class Cuckaroo29S
 	Cuckaroo29S();
 
 	int hash(const void* in, size_t len, uint32_t nonce, uint32_t *edges, void* out);
-	int hash(const void* in, size_t len, uint64_t nonce8, uint32_t nonce, uint32_t *edges, void* out);
 };
 #endif 
 
