@@ -30,7 +30,7 @@ class Cuckaroo29S
 	int verify(uint32_t *, siphash_keys*);
 	Cuckaroo29S();
 
-	int hash(const void* in, size_t len,uint32_t nonce,uint32_t *edges,void* out);
+	int hash(const void* in, size_t len, uint32_t nonce, uint32_t *edges, void* out);
 };
 #endif 
 

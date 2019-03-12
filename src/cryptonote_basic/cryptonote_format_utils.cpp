@@ -1153,6 +1153,9 @@ namespace cryptonote
     crypto::hash tree_root_hash = get_tx_tree_hash(b);
     blob.append(reinterpret_cast<const char*>(&tree_root_hash), sizeof(tree_root_hash));
     blob.append(tools::get_varint_data(b.tx_hashes.size()+1));
+    if (b.major_version >= HF_VERSION_NONCE8) {
+        blob.append(reinterpret_cast<const char*>(&b.nonce8), sizeof(b.nonce8));
+    }
     return blob;
   }
   //---------------------------------------------------------------
@@ -1245,7 +1248,8 @@ namespace cryptonote
     if (b.major_version >= HF_VERSION_CUCKOO) {
         uint32_t edges[32];
         for(int i = 0; i < 32; i++) edges[i] = b.cycle.data[i];
-        ctx.hashc29(bd.data(), bd.size(),b.nonce, edges, res.data);
+
+        ctx.hashc29(bd.data(), bd.size(), b.nonce, edges, res.data);
     }
     else{
         ctx.hash(bd.data(), bd.size(), res.data);
