@@ -97,7 +97,7 @@ static const struct {
   {  8, 150000 ,  0, 1545317008, 0 },
   {  9, 151000 ,  0, 1545332008, 0 },
   { 10, 555555 ,  0, 1550658699, 1 },
-  { 11, 555555 , 51, 1550658699, 0 }
+  { 11, 750000 , 51, 1553561408, 0 }
 
   // version 10 starts from block 1788000, which is on or around the 9th of March, 2019. Fork time finalised on 2019-02-10.
   { 10, 1788000, 0, 1549792439 },
@@ -119,7 +119,7 @@ static const struct {
   {  3,   150,  0, 1542548718, 0 },
   {  9,   250,  0, 1542648718, 0 },
   { 10, 52000, 51, 1549934499, 1 },
-  { 11, 62000, 51, 1549934499, 0 }
+  { 11, 62000, 51, 1552483567, 0 }
   { 10, 1154318, 0, 1550153694 },
   { 11, 1155038, 0, 1550225678 },
 };
@@ -132,8 +132,9 @@ static const struct {
   difficulty_type diff_reset_value;
 } stagenet_hard_forks[] = {
   // version 1 from the start of the blockchain
-  { 1  , 1, 0, 1341378000, 0 },
-  { 10 , 2, 0, 1341478000, 0 }
+  { 1  ,      1, 0, 1341378000, 0 },
+  { 10 ,      2, 0, 1341478000, 0 },
+  { 11 ,  21200, 0, 1551820225, 0 }
   { 10, 269000, 0, 1550153694 },
   { 11, 269720, 0, 1550225678 },
 };
@@ -4743,7 +4744,7 @@ void Blockchain::cancel()
 
 #if defined(PER_BLOCK_CHECKPOINT)
 static const char expected_block_hashes_hash[] = "5821941c2c4120e05edb3929c0e0e6283d7831499fde7d29965e710aac627193";
-void Blockchain::load_compiled_in_block_hashes(const GetCheckpointsCallback& get_checkpoints)
+void Blockchain::load_compiled_in_block_hashes()
 {
   if (get_checkpoints == nullptr || !m_fast_sync)
   {
