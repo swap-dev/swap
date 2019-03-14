@@ -114,7 +114,7 @@ static const struct {
   {  3,   150,  0, 1542548718, 0 },
   {  9,   250,  0, 1542648718, 0 },
   { 10, 52000, 51, 1549934499, 1 },
-  { 11, 62000, 51, 1552483567, 0 }
+  { 11, 62500, 51, 1552491067, 0 }
 };
 
 static const struct {
@@ -2336,7 +2336,7 @@ bool Blockchain::check_tx_outputs(const transaction& tx, tx_verification_context
   }
 
   // from v11, allow only bulletproofs v2
-  if (hf_version > HF_VERSION_SMALLER_BP) {
+  if (hf_version >= HF_VERSION_SMALLER_BP) {
     if (tx.version >= 2) {
       if (tx.rct_signatures.type == rct::RCTTypeBulletproof)
       {
