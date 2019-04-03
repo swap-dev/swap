@@ -145,15 +145,7 @@ int main(int argc, char *argv[]) {
     input.exceptions(ios_base::badbit | ios_base::failbit | ios_base::eofbit);
     input.clear(input.rdstate());
     get(input, data);
-    if (f == cn_slow_hash_4) {
-      V4_Data d;
-      d.data = data.data();
-      d.length = data.size();
-      get(input, d.height);
-      f(&d, 0, (char *) &actual);
-    } else {
-      f(data.data(), data.size(), (char *) &actual);
-    }
+    f(data.data(), data.size(), (char *) &actual);
     if (expected != actual) {
       size_t i;
       cerr << "Hash mismatch on test " << test << endl << "Input: ";
