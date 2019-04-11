@@ -50,3 +50,17 @@ build daemon and wallet:
 
 `cd swap && mkdir build && cd build && cmake .. && make -j4 daemon simplewallet`
 
+## Build on Windows (using MinGW)
+
+install deps:
+
+`pacman -S mingw-w64-x86_64-toolchain make mingw-w64-x86_64-cmake mingw-w64-x86_64-boost mingw-w64-x86_64-openssl mingw-w64-x86_64-zeromq mingw-w64-x86_64-libsodium mingw-w64-x86_64-hidapi`
+
+clone repo:
+
+`git clone --recursive https://github.com/swap-dev/swap`
+
+build daemon and wallet:
+
+`cd swap && make release-static-win64`
+
