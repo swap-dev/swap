@@ -531,6 +531,7 @@ bool t_rpc_command_executor::show_status() {
 bool t_rpc_command_executor::mining_status() {
   cryptonote::COMMAND_RPC_MINING_STATUS::request mreq;
   cryptonote::COMMAND_RPC_MINING_STATUS::response mres;
+  cryptonote::COMMAND_RPC_HARD_FORK_INFO::response hfres;
   epee::json_rpc::error error_resp;
   bool has_mining_info = true;
 
@@ -573,7 +574,7 @@ bool t_rpc_command_executor::mining_status() {
   }
   else
   {
-    tools::msg_writer() << "Mining at " << get_mining_speed(mres.speed) << " with " << mres.threads_count << " threads";
+    tools::msg_writer() << "Mining at " << get_mining_speed(mres.speed, hfres.version) << " with " << mres.threads_count << " threads";
   }
 
   if (mres.active || mres.is_background_mining_enabled)

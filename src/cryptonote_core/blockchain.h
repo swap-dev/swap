@@ -955,7 +955,7 @@ namespace cryptonote
      * @param blocks the blocks to be hashed
      * @param map return-by-reference the hashes for each block
      */
-    void block_longhash_worker(cn_pow_hash_v3& hash_ctx, const std::vector<block> &blocks,
+    void block_longhash_worker(cn_pow_hash_v3& hash_ctx, const epee::span<const block> &blocks,
         std::unordered_map<crypto::hash, crypto::hash> &map) const;
 
     /**

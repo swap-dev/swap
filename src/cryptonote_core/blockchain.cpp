@@ -98,12 +98,6 @@ static const struct {
   {  9, 151000 ,  0, 1545332008, 0 },
   { 10, 555555 ,  0, 1550658699, 1 },
   { 11, 750000 , 51, 1553561408, 0 }
-
-  // version 10 starts from block 1788000, which is on or around the 9th of March, 2019. Fork time finalised on 2019-02-10.
-  { 10, 1788000, 0, 1549792439 },
-
-  // version 11 starts from block 1788720, which is on or around the 10th of March, 2019. Fork time finalised on 2019-02-15.
-  { 11, 1788720, 0, 1550225678 },
 };
 
 static const struct {
@@ -120,8 +114,6 @@ static const struct {
   {  9,   250,  0, 1542648718, 0 },
   { 10, 52000, 51, 1549934499, 1 },
   { 11, 62500, 51, 1552491067, 0 }
-  { 10, 1154318, 0, 1550153694 },
-  { 11, 1155038, 0, 1550225678 },
 };
 
 static const struct {
@@ -135,8 +127,6 @@ static const struct {
   { 1  ,      1, 0, 1341378000, 0 },
   { 10 ,      2, 0, 1341478000, 0 },
   { 11 ,  21200, 0, 1551820225, 0 }
-  { 10, 269000, 0, 1550153694 },
-  { 11, 269720, 0, 1550225678 },
 };
 
 //------------------------------------------------------------------
@@ -3872,7 +3862,7 @@ bool Blockchain::update_next_cumulative_weight_limit(uint64_t *long_term_effecti
     uint64_t long_term_median;
     if (db_height == 1)
     {
-      long_term_median = CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V5;
+      long_term_median = CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE;
     }
     else
     {
@@ -4034,7 +4024,7 @@ void Blockchain::set_enforce_dns_checkpoints(bool enforce_checkpoints)
 }
 
 //------------------------------------------------------------------
-void Blockchain::block_longhash_worker(cn_pow_hash_v3& hash_ctx, const std::vector<block> &blocks, std::unordered_map<crypto::hash, crypto::hash> &map) const
+void Blockchain::block_longhash_worker(cn_pow_hash_v3& hash_ctx, const epee::span<const block> &blocks, std::unordered_map<crypto::hash, crypto::hash> &map) const
 {
   TIME_MEASURE_START(t);
   slow_hash_allocate_state();
@@ -4366,8 +4356,11 @@ bool Blockchain::prepare_handle_incoming_blocks(const std::vector<block_complete
       
 	  for (uint64_t i = 0; i < threads; i++)
       {
-        tpool.submit(&waiter, boost::bind(&Blockchain::block_longhash_worker, this, std::ref(m_hash_ctxes_multi[i]), std::cref(blocks[i]), std::ref(maps[i])), true);
-        thread_height += blocks[i].size();
+        unsigned nblocks = batches;
+        if (i < extra)
+          ++nblocks;
+        tpool.submit(&waiter, boost::bind(&Blockchain::block_longhash_worker, this, std::ref(m_hash_ctxes_multi[i]), epee::span<const block>(&blocks[thread_height - height], nblocks), std::ref(maps[i])), true);
+        thread_height += nblocks;
       }
 
       waiter.wait(&tpool);
@@ -4744,7 +4737,7 @@ void Blockchain::cancel()
 
 #if defined(PER_BLOCK_CHECKPOINT)
 static const char expected_block_hashes_hash[] = "9172cbb042adeebc31fe1b94d3b2210d29cf261e4f615f63a68027259998bf72";
-void Blockchain::load_compiled_in_block_hashes()
+void Blockchain::load_compiled_in_block_hashes(const GetCheckpointsCallback& get_checkpoints)
 {
   if (get_checkpoints == nullptr || !m_fast_sync)
   {

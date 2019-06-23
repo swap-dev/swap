@@ -148,6 +148,7 @@ namespace
   const command_line::arg_descriptor<bool> arg_non_deterministic = {"non-deterministic", sw::tr("Generate non-deterministic view and spend keys"), false};
   const command_line::arg_descriptor<bool> arg_allow_mismatched_daemon_version = {"allow-mismatched-daemon-version", sw::tr("Allow communicating with a daemon that uses a different RPC version"), false};
   const command_line::arg_descriptor<uint64_t> arg_restore_height = {"restore-height", sw::tr("Restore from specific blockchain height"), 0};
+  const command_line::arg_descriptor<std::string> arg_restore_date = {"restore-date", sw::tr("Restore from estimated blockchain height on specified date"), ""};
   const command_line::arg_descriptor<bool> arg_do_not_relay = {"do-not-relay", sw::tr("The newly created transaction will not be relayed to the swap network"), false};
   const command_line::arg_descriptor<bool> arg_create_address_file = {"create-address-file", sw::tr("Create an address file for new wallets"), false};
   const command_line::arg_descriptor<std::string> arg_subaddress_lookahead = {"subaddress-lookahead", tools::wallet2::tr("Set subaddress lookahead sizes to <major>:<minor>"), ""};
@@ -7712,7 +7713,7 @@ bool simple_wallet::get_transfers(std::vector<std::string>& local_args, std::vec
         else
         {
           uint64_t current_time = static_cast<uint64_t>(time(NULL));
-          uint64_t threshold = current_time + (m_wallet->use_fork_rules(2, 0) ? CRYPTONOTE_LOCKED_TX_ALLOWED_DELTA_SECONDS_V2 : CRYPTONOTE_LOCKED_TX_ALLOWED_DELTA_SECONDS_V1);
+          uint64_t threshold = current_time + CRYPTONOTE_LOCKED_TX_ALLOWED_DELTA_SECONDS;
           if (threshold < pd.m_unlock_time)
             locked_msg = get_human_readable_timespan(std::chrono::seconds(pd.m_unlock_time - threshold));
         }
