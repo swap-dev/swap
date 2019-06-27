@@ -40,7 +40,7 @@ fh2jc6PbQYd4a5PY3ooPMZiPVniMy4MGcjSRBnoBVc1xLmdCHJ6hc98Ess2hpN2mDgPnCAXtDUUbmjWY
 
 install deps:
 
-`sudo apt-get install build-essential cmake pkg-config libboost-all-dev libssl-dev libzmq3-dev libunbound-dev libsodium-dev libreadline6-dev libpgm-dev`
+`sudo apt-get install build-essential cmake pkg-config libboost-all-dev libssl-dev libzmq3-dev libunbound-dev libsodium-dev libreadline6-dev libpgm-dev libnorm-dev`
 
 clone repo:
 
@@ -48,7 +48,11 @@ clone repo:
 
 build daemon and wallet:
 
-`cd swap && mkdir build && cd build && cmake .. && make -j4 daemon simplewallet`
+`cd swap && mkdir build && cd build && cmake .. && make daemon simplewallet`
+
+or build everything:
+
+`cd swap && mkdir build && cd build && cmake .. && make`
 
 ## Build on Windows (using MinGW)
 
