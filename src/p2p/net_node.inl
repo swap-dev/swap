@@ -462,8 +462,9 @@ namespace nodetool
       full_addrs.insert("148.251.154.104:19949"); //joe - EU
       full_addrs.insert("144.76.190.11:19949");   //snoopy - EU
       full_addrs.insert("94.23.159.182:443");
-      full_addrs.insert("66.70.141.138:19949");   //lfy
+      full_addrs.insert("66.70.141.138:19949");   //lfy - NA
       full_addrs.insert("195.201.186.172:19949");
+      full_addrs.insert("58.185.155.109:19949"); //reeyon - ASIA
     }
     return full_addrs;
   }
