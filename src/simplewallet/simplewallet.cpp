@@ -219,7 +219,7 @@ namespace
   const char* USAGE_MMS("mms [<subcommand> [<subcommand_parameters>]]");
   const char* USAGE_MMS_INIT("mms init <required_signers>/<authorized_signers> <own_label> <own_transport_address>");
   const char* USAGE_MMS_INFO("mms info");
-  const char* USAGE_MMS_SIGNER("mms signer [<number> <label> [<transport_address> [<monero_address>]]]");
+  const char* USAGE_MMS_SIGNER("mms signer [<number> <label> [<transport_address> [<swap_address>]]]");
   const char* USAGE_MMS_LIST("mms list");
   const char* USAGE_MMS_NEXT("mms next [sync]");
   const char* USAGE_MMS_SYNC("mms sync");
@@ -2792,7 +2792,7 @@ simple_wallet::simple_wallet()
   m_cmd_binder.set_handler("donate",
                            boost::bind(&simple_wallet::donate, this, _1),
                            tr(USAGE_DONATE),
-                           tr("Donate <amount> to the development team (donate.getmonero.org)."));
+                           tr("Donate <amount> to the development team (donate.xwp.fyi)."));
   m_cmd_binder.set_handler("sign_transfer",
                            boost::bind(&simple_wallet::sign_transfer, this, _1),
                            tr(USAGE_SIGN_TRANSFER),
@@ -3078,7 +3078,7 @@ simple_wallet::simple_wallet()
   m_cmd_binder.set_handler("mms signer",
                            boost::bind(&simple_wallet::mms, this, _1),
                            tr(USAGE_MMS_SIGNER),
-                           tr("Set or modify authorized signer info (single-word label, transport address, Monero address), or list all signers"));
+                           tr("Set or modify authorized signer info (single-word label, transport address, Swap address), or list all signers"));
   m_cmd_binder.set_handler("mms list",
                            boost::bind(&simple_wallet::mms, this, _1),
                            tr(USAGE_MMS_LIST),
@@ -3191,7 +3191,7 @@ simple_wallet::simple_wallet()
   m_cmd_binder.set_handler("welcome",
                            boost::bind(&simple_wallet::welcome, this, _1),
                            tr(USAGE_WELCOME),
-                           tr("Prints basic info about Monero for first time users"));
+                           tr("Prints basic info about Swap for first time users"));
   m_cmd_binder.set_handler("version",
                            boost::bind(&simple_wallet::version, this, _1),
                            tr(USAGE_VERSION),
@@ -3253,7 +3253,7 @@ bool simple_wallet::set_variable(const std::vector<std::string> &args)
     success_msg_writer() << "segregation-height = " << m_wallet->segregation_height();
     success_msg_writer() << "ignore-fractional-outputs = " << m_wallet->ignore_fractional_outputs();
     success_msg_writer() << "track-uses = " << m_wallet->track_uses();
-    success_msg_writer() << "setup-background-mining = " << setup_background_mining_string + tr(" (set this to support the network and to get a chance to receive new monero)");
+    success_msg_writer() << "setup-background-mining = " << setup_background_mining_string + tr(" (set this to support the network and to get a chance to receive new swap)");
     success_msg_writer() << "device_name = " << m_wallet->device_name();
     return true;
   }
@@ -4086,7 +4086,7 @@ bool simple_wallet::init(const boost::program_options::variables_map& vm)
   m_wallet->callback(this);
 
   if (welcome)
-    message_writer(console_color_yellow, true) << tr("If you are new to Monero, type \"welcome\" for a brief overview.");
+    message_writer(console_color_yellow, true) << tr("If you are new to Swap, type \"welcome\" for a brief overview.");
 
   if (m_long_payment_id_support)
   {
@@ -4676,7 +4676,7 @@ void simple_wallet::start_background_mining()
       return;
     }
   }
-  success_msg_writer() << tr("Background mining enabled. Thank you for supporting the Monero network.");
+  success_msg_writer() << tr("Background mining enabled. Thank you for supporting the Swap network.");
 }
 //----------------------------------------------------------------------------------------------------
 void simple_wallet::stop_background_mining()
@@ -4745,7 +4745,7 @@ void simple_wallet::check_background_mining(const epee::wipeable_string &passwor
   {
     message_writer() << tr("The daemon is not set up to background mine.");
     message_writer() << tr("With background mining enabled, the daemon will mine when idle and not on batttery.");
-    message_writer() << tr("Enabling this supports the network you are using, and makes you eligible for receiving new monero");
+    message_writer() << tr("Enabling this supports the network you are using, and makes you eligible for receiving new swap");
     std::string accepted = input_line(tr("Do you want to do it now? (Y/Yes/N/No): "));
     if (std::cin.eof() || !command_line::is_yes(accepted)) {
       m_wallet->setup_background_mining(tools::wallet2::BackgroundMiningNo);
@@ -6827,7 +6827,7 @@ bool simple_wallet::donate(const std::vector<std::string> &args_)
   if (!payment_id_str.empty())
     local_args.push_back(payment_id_str);
   if (m_wallet->nettype() == cryptonote::MAINNET)
-    message_writer() << (boost::format(tr("Donating %s %s to The Swap Project (donate.getmonero.org or %s).")) % amount_str % cryptonote::get_unit(cryptonote::get_default_decimal_point()) % MONERO_DONATION_ADDR).str();
+    message_writer() << (boost::format(tr("Donating %s %s to The Swap Project (donate.xwp.fyi or %s).")) % amount_str % cryptonote::get_unit(cryptonote::get_default_decimal_point()) % MONERO_DONATION_ADDR).str();
   else
     message_writer() << (boost::format(tr("Donating %s %s to %s.")) % amount_str % cryptonote::get_unit(cryptonote::get_default_decimal_point()) % address_str).str();
   transfer(local_args);
@@ -9583,7 +9583,7 @@ void simple_wallet::list_mms_messages(const std::vector<mms::message> &messages)
 void simple_wallet::list_signers(const std::vector<mms::authorized_signer> &signers)
 {
   message_writer() << boost::format("%2s %-20s %-s") % tr("#") % tr("Label") % tr("Transport Address");
-  message_writer() << boost::format("%2s %-20s %-s") % "" % tr("Auto-Config Token") % tr("Monero Address");
+  message_writer() << boost::format("%2s %-20s %-s") % "" % tr("Auto-Config Token") % tr("Swap Address");
   for (size_t i = 0; i < signers.size(); ++i)
   {
     const mms::authorized_signer &signer = signers[i];
@@ -9789,7 +9789,7 @@ void simple_wallet::mms_signer(const std::vector<std::string> &args)
   }
   if ((args.size() < 2) || (args.size() > 4))
   {
-    fail_msg_writer() << tr("mms signer [<number> <label> [<transport_address> [<monero_address>]]]");
+    fail_msg_writer() << tr("mms signer [<number> <label> [<transport_address> [<swap_address>]]]");
     return;
   }
 
@@ -9808,14 +9808,14 @@ void simple_wallet::mms_signer(const std::vector<std::string> &args)
     bool ok = cryptonote::get_account_address_from_str_or_url(info, m_wallet->nettype(), args[3], oa_prompter);
     if (!ok)
     {
-      fail_msg_writer() << tr("Invalid Monero address");
+      fail_msg_writer() << tr("Invalid Swap address");
       return;
     }
     monero_address = info.address;
     const std::vector<mms::message> &messages = ms.get_all_messages();
     if ((messages.size() > 0) || state.multisig)
     {
-      fail_msg_writer() << tr("Wallet state does not allow changing Monero addresses anymore");
+      fail_msg_writer() << tr("Wallet state does not allow changing Swap addresses anymore");
       return;
     }
   }

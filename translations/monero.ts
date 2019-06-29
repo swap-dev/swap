@@ -2,7 +2,7 @@
 <!DOCTYPE TS>
 <TS version="2.1">
 <context>
-    <name>Monero::AddressBookImpl</name>
+    <name>Swap::AddressBookImpl</name>
     <message>
         <location filename="../src/wallet/api/address_book.cpp" line="53"/>
         <source>Invalid destination address</source>
@@ -25,7 +25,7 @@
     </message>
 </context>
 <context>
-    <name>Monero::PendingTransactionImpl</name>
+    <name>Swap::PendingTransactionImpl</name>
     <message>
         <location filename="../src/wallet/api/pending_transaction.cpp" line="91"/>
         <source>Attempting to save transaction to file, but specified file(s) exist. Exiting to not risk overwriting. File:</source>
@@ -78,7 +78,7 @@
     </message>
 </context>
 <context>
-    <name>Monero::UnsignedTransactionImpl</name>
+    <name>Swap::UnsignedTransactionImpl</name>
     <message>
         <location filename="../src/wallet/api/unsigned_transaction.cpp" line="75"/>
         <source>This is a watch only wallet</source>
@@ -132,7 +132,7 @@
     </message>
 </context>
 <context>
-    <name>Monero::WalletImpl</name>
+    <name>Swap::WalletImpl</name>
     <message>
         <location filename="../src/wallet/api/wallet.cpp" line="1459"/>
         <source>payment id has invalid format, expected 16 or 64 character hex string: </source>
@@ -1272,17 +1272,17 @@
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="2145"/>
-        <source>Welcome to Monero, the private cryptocurrency.</source>
+        <source>Welcome to Swap, the private cryptocurrency.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="2147"/>
-        <source>Monero, like Bitcoin, is a cryptocurrency. That is, it is digital money.</source>
+        <source>Swap, like Bitcoin, is a cryptocurrency. That is, it is digital money.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="2148"/>
-        <source>Unlike Bitcoin, your Monero transactions and balance stay private, and not visible to the world by default.</source>
+        <source>Unlike Bitcoin, your Swap transactions and balance stay private, and not visible to the world by default.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1292,32 +1292,32 @@
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="2151"/>
-        <source>Monero protects your privacy on the blockchain, and while Monero strives to improve all the time,</source>
+        <source>Swap protects your privacy on the blockchain, and while Swap strives to improve all the time,</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="2152"/>
-        <source>no privacy technology can be 100% perfect, Monero included.</source>
+        <source>no privacy technology can be 100% perfect, Swap included.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="2153"/>
-        <source>Monero cannot protect you from malware, and it may not be as effective as we hope against powerful adversaries.</source>
+        <source>Swap cannot protect you from malware, and it may not be as effective as we hope against powerful adversaries.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="2154"/>
-        <source>Flaws in Monero may be discovered in the future, and attacks may be developed to peek under some</source>
+        <source>Flaws in Swap may be discovered in the future, and attacks may be developed to peek under some</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="2155"/>
-        <source>of the layers of privacy Monero provides. Be safe and practice defense in depth.</source>
+        <source>of the layers of privacy Swap provides. Be safe and practice defense in depth.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="2157"/>
-        <source>Welcome to Monero and financial privacy. For more information, see https://getmonero.org/</source>
+        <source>Welcome to Swap and financial privacy. For more information, see https://getmonero.org/</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1453,7 +1453,7 @@ Amount, Spent(&quot;T&quot;|&quot;F&quot;), &quot;frozen&quot;|&quot;locked&quot
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="2797"/>
-        <source>Donate &lt;amount&gt; to the development team (donate.getmonero.org).</source>
+        <source>Donate &lt;amount&gt; to the development team (donate.xwp.fyi).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1562,12 +1562,12 @@ If the &quot;tag_description&quot; argument is specified, the tag &lt;tag_name&g
  auto-low-priority &lt;1|0&gt;
    Whether to automatically use the low priority fee level when it&apos;s safe to do so.
  segregate-pre-fork-outputs &lt;1|0&gt;
-   Set this if you intend to spend outputs on both Monero AND a key reusing fork.
+   Set this if you intend to spend outputs on both Swap AND a key reusing fork.
  key-reuse-mitigation2 &lt;1|0&gt;
-   Set this if you are not sure whether you will spend on a key reusing Monero fork later.
+   Set this if you are not sure whether you will spend on a key reusing Swap fork later.
 subaddress-lookahead &lt;major&gt;:&lt;minor&gt;
    Set the lookahead sizes for the subaddress hash table.
-   Set this if you are not sure whether you will spend on a key reusing Monero fork later.
+   Set this if you are not sure whether you will spend on a key reusing Swap fork later.
  segregation-height &lt;n&gt;
    Set to the height of a key reusing fork you want to use, 0 to use default.</source>
         <translation type="unfinished"></translation>
@@ -1794,7 +1794,7 @@ Key Image, &quot;absolute&quot;, list of rings</source>
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="3196"/>
-        <source>Prints basic info about Monero for first time users</source>
+        <source>Prints basic info about Swap for first time users</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3023,7 +3023,7 @@ Get help about a subcommand with: help mms &lt;subcommand&gt;, or mms help &lt;s
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="3083"/>
-        <source>Set or modify authorized signer info (single-word label, transport address, Monero address), or list all signers</source>
+        <source>Set or modify authorized signer info (single-word label, transport address, Swap address), or list all signers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3226,7 +3226,7 @@ By using &apos;sync&apos; processing of waiting messages with multisig sync info
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="4093"/>
-        <source>If you are new to Monero, type &quot;welcome&quot; for a brief overview.</source>
+        <source>If you are new to Swap, type &quot;welcome&quot; for a brief overview.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3253,7 +3253,7 @@ By using &apos;sync&apos; processing of waiting messages with multisig sync info
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="4683"/>
-        <source>Background mining enabled. Thank you for supporting the Monero network.</source>
+        <source>Background mining enabled. Thank you for supporting the Swap network.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3649,7 +3649,7 @@ This transaction (including %s change) will unlock on block %llu, in approximate
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="9590"/>
-        <source>Monero Address</source>
+        <source>Swap Address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3761,12 +3761,12 @@ This transaction (including %s change) will unlock on block %llu, in approximate
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="9815"/>
-        <source>Invalid Monero address</source>
+        <source>Invalid Swap address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="9822"/>
-        <source>Wallet state does not allow changing Monero addresses anymore</source>
+        <source>Wallet state does not allow changing Swap addresses anymore</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4145,7 +4145,7 @@ This transaction (including %s change) will unlock on block %llu, in approximate
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="6834"/>
-        <source>Donating %s %s to The Monero Project (donate.getmonero.org or %s).</source>
+        <source>Donating %s %s to The Swap Project (donate.xwp.fyi or %s).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5076,7 +5076,7 @@ Use &quot;mms note&quot; to display the waiting notes</source>
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="447"/>
-        <source> Monero Address = </source>
+        <source> Swap Address = </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5224,7 +5224,7 @@ Use &quot;mms note&quot; to display the waiting notes</source>
         <location filename="../src/simplewallet/simplewallet.cpp" line="9407"/>
         <source>This is the command line monero wallet. It needs to connect to a monero
 daemon to work correctly.
-WARNING: Do not reuse your Monero keys on another fork, UNLESS this fork has key reuse mitigations built in. Doing so will harm your privacy.</source>
+WARNING: Do not reuse your Swap keys on another fork, UNLESS this fork has key reuse mitigations built in. Doing so will harm your privacy.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5318,7 +5318,7 @@ WARNING: Do not reuse your Monero keys on another fork, UNLESS this fork has key
     </message>
     <message>
         <location filename="../src/wallet/wallet2.cpp" line="247"/>
-        <source>Use daemon instance at port &lt;arg&gt; instead of 18081</source>
+        <source>Use daemon instance at port &lt;arg&gt; instead of 19950</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
