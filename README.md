@@ -14,7 +14,7 @@ Swap (previously known as Freehaven) is based on [Monero](README_original.md)
 - Bitcointalk [bitcointalk.org/index.php?topic=5083455](https://bitcointalk.org/index.php?topic=5083455)
 - Discord: [discord.gg/SmcFCPu](https://discord.gg/SmcFCPu)
 - Reddit: [r/SwapProject/](https://www.reddit.com/r/SwapProject/)
-- Twitter: [@_realSwap](https://twitter.com/_realSwap)
+- Twitter: [@Swap_Community](https://twitter.com/Swap_Community)
 - Email: xwpdev@gmail.com
 
 ## Specifications & Emission
