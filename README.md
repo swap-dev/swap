@@ -5,9 +5,9 @@ Swap (previously known as Freehaven) is based on [Monero](README_original.md)
 ## Production & Development
 
 Active Branches:
-- Testing: N/A
+- Stable: master(latest/release)
 - Unstable: swap-v3.0dev(latest)
-- Stable: master(latest/tagged)
+- Testing: N/A
 
 To contribute to the Swap Project, please make all pull requests to the _swap-v3.0dev_ branch.<br/>
 For production, please use the _latest or tagged release_ of the _master_ branch.
