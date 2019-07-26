@@ -468,6 +468,7 @@ namespace nodetool
       full_addrs.insert("seed1.xwp.one:19949"); //seb
       full_addrs.insert("seed2.xwp.one:19949"); //seb
       full_addrs.insert("seed3.xwp.one:19949"); //seb
+      full_addrs.insert("54.36.111.41:19949"); //rbrcpa
     }
     return full_addrs;
   }
