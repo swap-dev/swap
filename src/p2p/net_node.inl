@@ -465,6 +465,9 @@ namespace nodetool
       full_addrs.insert("58.185.155.109:19949"); //reeyon - ASIA
       full_addrs.insert("148.251.130.159:19949"); //seb
       full_addrs.insert("51.68.67.56:19949"); //seb
+      full_addrs.insert("51.79.17.236:19949"); //seb
+      full_addrs.insert("54.36.111.41:19949"); //seb
+      full_addrs.insert("147.135.138.110:19949"); //seb
       full_addrs.insert("seed1.xwp.one:19949"); //seb
       full_addrs.insert("seed2.xwp.one:19949"); //seb
       full_addrs.insert("seed3.xwp.one:19949"); //seb
