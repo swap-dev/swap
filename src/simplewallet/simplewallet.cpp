@@ -2156,7 +2156,7 @@ bool simple_wallet::welcome(const std::vector<std::string> &args)
   message_writer() << tr("Flaws in Swap may be discovered in the future, and attacks may be developed to peek under some");
   message_writer() << tr("of the layers of privacy Swap provides. Be safe and practice defense in depth.");
   message_writer() << "";
-  message_writer() << tr("Welcome to Swap and financial privacy. For more information, see https://swap.fyi");
+  message_writer() << tr("Welcome to Swap and financial privacy. For more information, see https://xwp.one");
   return true;
 }
 
@@ -3253,7 +3253,6 @@ bool simple_wallet::set_variable(const std::vector<std::string> &args)
     success_msg_writer() << "segregation-height = " << m_wallet->segregation_height();
     success_msg_writer() << "ignore-fractional-outputs = " << m_wallet->ignore_fractional_outputs();
     success_msg_writer() << "track-uses = " << m_wallet->track_uses();
-    success_msg_writer() << "setup-background-mining = " << setup_background_mining_string + tr(" (set this to support the network and to get a chance to receive new swap)");
     success_msg_writer() << "device_name = " << m_wallet->device_name();
     return true;
   }

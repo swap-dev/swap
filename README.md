@@ -14,8 +14,8 @@ For production, please use the _latest or tagged release_ of the _master_ branch
 
 ## Resources
 
-- Webpage: [swap.fyi](https://swap.fyi/)
-- Explorer: [swap.coinscope.cc](https://swap.coinscope.cc/)
+- Webpage: [xwp.one](https://xwp.one)
+- Explorer: [explorer.xwp.one](https://explorer.xwp.one)
 - Pool List: [miningpoolstats.stream/swap](https://miningpoolstats.stream/swap)
 - GitHub: [github.com/swap-dev/swap](https://github.com/swap-dev/swap)
 
