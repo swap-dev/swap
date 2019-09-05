@@ -50,7 +50,7 @@ fh2jc6PbQYd4a5PY3ooPMZiPVniMy4MGcjSRBnoBVc1xLmdCHJ6hc98Ess2hpN2mDgPnCAXtDUUbmjWY
 
 install deps:
 
-`sudo apt-get install build-essential cmake pkg-config libboost-all-dev libssl-dev libzmq3-dev libunbound-dev libsodium-dev libreadline6-dev libpgm-dev libnorm-dev`
+`sudo apt-get install build-essential cmake pkg-config libboost-all-dev libssl-dev libzmq3-dev libunbound-dev libsodium-dev libreadline-dev libpgm-dev libnorm-dev doxygen graphviz libhidapi-dev libminiupnpc-dev libunwind-dev liblzma-dev libldns-dev`
 
 clone repo:
 
