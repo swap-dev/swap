@@ -31,17 +31,20 @@
 
 #include <boost/uuid/uuid.hpp>
 #include <boost/asio/io_service.hpp>
+#include <boost/asio/ip/address_v6.hpp>
 #include <typeinfo>
 #include <type_traits>
+#include "byte_slice.h"
 #include "enums.h"
-#include "serialization/keyvalue_serialization.h"
 #include "misc_log_ex.h"
+#include "serialization/keyvalue_serialization.h"
+#include "int-util.h"
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "net"
 
 #ifndef MAKE_IP
-#define MAKE_IP( a1, a2, a3, a4 )	(a1|(a2<<8)|(a3<<16)|(a4<<24))
+#define MAKE_IP( a1, a2, a3, a4 )	(a1|(a2<<8)|(a3<<16)|(((uint32_t)a4)<<24))
 #endif
 
 #if BOOST_VERSION >= 107000
@@ -89,7 +92,20 @@ namespace net_utils
 		static constexpr bool is_blockable() noexcept { return true; }
 
 		BEGIN_KV_SERIALIZE_MAP()
-			KV_SERIALIZE(m_ip)
+			if (is_store)
+			{
+				KV_SERIALIZE_VAL_POD_AS_BLOB_N(m_ip, "ip")
+				uint32_t ip = SWAP32LE(this_ref.m_ip);
+				epee::serialization::selector<is_store>::serialize(ip, stg, hparent_section, "m_ip");
+			}
+			else
+			{
+				if (!epee::serialization::selector<is_store>::serialize_t_val_as_blob(this_ref.m_ip, stg, hparent_section, "ip"))
+				{
+					KV_SERIALIZE(m_ip)
+					const_cast<ipv4_network_address&>(this_ref).m_ip = SWAP32LE(this_ref.m_ip);
+				}
+			}
 			KV_SERIALIZE(m_port)
 		END_KV_SERIALIZE_MAP()
 	};
@@ -105,6 +121,106 @@ namespace net_utils
 	inline bool operator>(const ipv4_network_address& lhs, const ipv4_network_address& rhs) noexcept
 	{ return rhs.less(lhs); }
 	inline bool operator>=(const ipv4_network_address& lhs, const ipv4_network_address& rhs) noexcept
+	{ return !lhs.less(rhs); }
+
+	class ipv4_network_subnet
+	{
+		uint32_t m_ip;
+		uint8_t m_mask;
+
+	public:
+		constexpr ipv4_network_subnet() noexcept
+			: ipv4_network_subnet(0, 0)
+		{}
+
+		constexpr ipv4_network_subnet(uint32_t ip, uint8_t mask) noexcept
+			: m_ip(ip), m_mask(mask) {}
+
+		bool equal(const ipv4_network_subnet& other) const noexcept;
+		bool less(const ipv4_network_subnet& other) const noexcept;
+		constexpr bool is_same_host(const ipv4_network_subnet& other) const noexcept
+		{ return subnet() == other.subnet(); }
+                bool matches(const ipv4_network_address &address) const;
+
+		constexpr uint32_t subnet() const noexcept { return m_ip & ~(0xffffffffull << m_mask); }
+		std::string str() const;
+		std::string host_str() const;
+		bool is_loopback() const;
+		bool is_local() const;
+		static constexpr address_type get_type_id() noexcept { return address_type::invalid; }
+		static constexpr zone get_zone() noexcept { return zone::public_; }
+		static constexpr bool is_blockable() noexcept { return true; }
+
+		BEGIN_KV_SERIALIZE_MAP()
+			KV_SERIALIZE(m_ip)
+			KV_SERIALIZE(m_mask)
+		END_KV_SERIALIZE_MAP()
+	};
+
+	inline bool operator==(const ipv4_network_subnet& lhs, const ipv4_network_subnet& rhs) noexcept
+	{ return lhs.equal(rhs); }
+	inline bool operator!=(const ipv4_network_subnet& lhs, const ipv4_network_subnet& rhs) noexcept
+	{ return !lhs.equal(rhs); }
+	inline bool operator<(const ipv4_network_subnet& lhs, const ipv4_network_subnet& rhs) noexcept
+	{ return lhs.less(rhs); }
+	inline bool operator<=(const ipv4_network_subnet& lhs, const ipv4_network_subnet& rhs) noexcept
+	{ return !rhs.less(lhs); }
+	inline bool operator>(const ipv4_network_subnet& lhs, const ipv4_network_subnet& rhs) noexcept
+	{ return rhs.less(lhs); }
+	inline bool operator>=(const ipv4_network_subnet& lhs, const ipv4_network_subnet& rhs) noexcept
+	{ return !lhs.less(rhs); }
+
+	class ipv6_network_address
+	{
+	protected:
+		boost::asio::ip::address_v6 m_address;
+		uint16_t m_port;
+
+	public:
+		ipv6_network_address()
+			: ipv6_network_address(boost::asio::ip::address_v6::loopback(), 0)
+		{}
+
+		ipv6_network_address(const boost::asio::ip::address_v6& ip, uint16_t port)
+			: m_address(ip), m_port(port)
+		{
+		}
+
+		bool equal(const ipv6_network_address& other) const noexcept;
+		bool less(const ipv6_network_address& other) const noexcept;
+		bool is_same_host(const ipv6_network_address& other) const noexcept
+		{ return m_address == other.m_address; }
+
+		boost::asio::ip::address_v6 ip() const noexcept { return m_address; }
+		uint16_t port() const noexcept { return m_port; }
+		std::string str() const;
+		std::string host_str() const;
+		bool is_loopback() const;
+		bool is_local() const;
+		static constexpr address_type get_type_id() noexcept { return address_type::ipv6; }
+		static constexpr zone get_zone() noexcept { return zone::public_; }
+		static constexpr bool is_blockable() noexcept { return true; }
+
+		static const uint8_t ID = 2;
+		BEGIN_KV_SERIALIZE_MAP()
+			boost::asio::ip::address_v6::bytes_type bytes = this_ref.m_address.to_bytes();
+			epee::serialization::selector<is_store>::serialize_t_val_as_blob(bytes, stg, hparent_section, "addr");
+			const_cast<boost::asio::ip::address_v6&>(this_ref.m_address) = boost::asio::ip::address_v6(bytes);
+			KV_SERIALIZE(m_port)
+		END_KV_SERIALIZE_MAP()
+	};
+
+	inline bool operator==(const ipv6_network_address& lhs, const ipv6_network_address& rhs) noexcept
+	{ return lhs.equal(rhs); }
+	inline bool operator!=(const ipv6_network_address& lhs, const ipv6_network_address& rhs) noexcept
+	{ return !lhs.equal(rhs); }
+	inline bool operator<(const ipv6_network_address& lhs, const ipv6_network_address& rhs) noexcept
+	{ return lhs.less(rhs); }
+	inline bool operator<=(const ipv6_network_address& lhs, const ipv6_network_address& rhs) noexcept
+	{ return !rhs.less(lhs); }
+	inline bool operator>(const ipv6_network_address& lhs, const ipv6_network_address& rhs) noexcept
+	{ return rhs.less(lhs); }
+	inline bool operator>=(const ipv6_network_address& lhs, const ipv6_network_address& rhs) noexcept
 	{ return !lhs.less(rhs); }
 
 	class network_address
@@ -214,6 +330,8 @@ namespace net_utils
 			{
 				case address_type::ipv4:
 					return this_ref.template serialize_addr<ipv4_network_address>(is_store_, stg, hparent_section);
+				case address_type::ipv6:
+					return this_ref.template serialize_addr<ipv6_network_address>(is_store_, stg, hparent_section);
 				case address_type::tor:
 					return this_ref.template serialize_addr<net::tor_address>(is_store_, stg, hparent_section);
 				case address_type::i2p:
@@ -250,7 +368,7 @@ namespace net_utils
     const network_address m_remote_address;
     const bool     m_is_income;
     const time_t   m_started;
-    const time_t   m_ssl;
+    const bool      m_ssl;
     time_t   m_last_recv;
     time_t   m_last_send;
     uint64_t m_recv_cnt;
@@ -321,7 +439,7 @@ namespace net_utils
 	/************************************************************************/
 	struct i_service_endpoint
 	{
-		virtual bool do_send(const void* ptr, size_t cb)=0;
+		virtual bool do_send(byte_slice message)=0;
     virtual bool close()=0;
     virtual bool send_done()=0;
     virtual bool call_run_once_service_io()=0;

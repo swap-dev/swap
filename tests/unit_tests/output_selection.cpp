@@ -138,7 +138,7 @@ TEST(select_outputs, density)
   static const size_t NPICKS = 1000000;
   std::vector<uint64_t> offsets;
 
-  MKOFFSETS(300000, 1 + (rand() & 0x1f));
+  MKOFFSETS(300000, 1 + (crypto::rand<size_t>() & 0x1f));
   tools::gamma_picker picker(offsets);
 
   std::vector<int> picks(/*n_outs*/offsets.size(), 0);
@@ -181,7 +181,7 @@ TEST(select_outputs, same_distribution)
   static const size_t NPICKS = 1000000;
   std::vector<uint64_t> offsets;
 
-  MKOFFSETS(300000, 1 + (rand() & 0x1f));
+  MKOFFSETS(300000, 1 + (crypto::rand<size_t>() & 0x1f));
   tools::gamma_picker picker(offsets);
 
   std::vector<int> chain_picks(offsets.size(), 0);
@@ -211,10 +211,10 @@ TEST(select_outputs, same_distribution)
   {
     const double diff = (double)output_norm[i] - (double)chain_norm[i];
     double dev = fabs(2.0 * diff / (output_norm[i] + chain_norm[i]));
-    ASSERT_LT(dev, 0.1);
+    ASSERT_LT(dev, 0.15);
     avg_dev += dev;
   }
   avg_dev /= 100;
   MDEBUG("avg_dev: " << avg_dev);
-  ASSERT_LT(avg_dev, 0.015);
+  ASSERT_LT(avg_dev, 0.02);
 }

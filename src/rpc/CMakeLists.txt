@@ -30,6 +30,7 @@ set(rpc_base_sources
   rpc_args.cpp)
 
 set(rpc_sources
+  bootstrap_daemon.cpp
   core_rpc_server.cpp
   rpc_handler.cpp
   instanciations)
@@ -47,12 +48,13 @@ set(rpc_base_headers
   rpc_args.h)
 
 set(rpc_headers
-  rpc_handler.cpp)
+  rpc_handler.h)
 
 set(daemon_rpc_server_headers)
 
 
 set(rpc_daemon_private_headers
+  bootstrap_daemon.h
   core_rpc_server.h
   core_rpc_server_commands_defs.h
   core_rpc_server_error_codes.h)

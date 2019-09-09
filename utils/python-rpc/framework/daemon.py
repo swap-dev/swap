@@ -67,11 +67,13 @@ class Daemon(object):
         }    
         return self.rpc.send_json_rpc_request(submitblock)
 
-    def getblock(self, height=0):
+    def getblock(self, hash = '', height = 0, fill_pow_hash = False):
         getblock = {
             'method': 'getblock',
             'params': {
-                'height': height
+                'hash': hash,
+                'height': height,
+                'fill_pow_hash': fill_pow_hash,
             },
             'jsonrpc': '2.0', 
             'id': '0'
@@ -88,11 +90,12 @@ class Daemon(object):
         }
         return self.rpc.send_json_rpc_request(getlastblockheader)
 
-    def getblockheaderbyhash(self, hash):
+    def getblockheaderbyhash(self, hash = "", hashes = []):
         getblockheaderbyhash = {
             'method': 'getblockheaderbyhash',
             'params': {
                 'hash': hash,
+                'hashes': hashes,
             },
             'jsonrpc': '2.0', 
             'id': '0'
@@ -330,3 +333,14 @@ class Daemon(object):
             'id': '0'
         }
         return self.rpc.send_json_rpc_request(get_alternate_chains)
+
+    def get_fee_estimate(self, grace_blocks = 0):
+        get_fee_estimate = {
+            'method': 'get_fee_estimate',
+            'params': {
+                'grace_blocks': grace_blocks,
+            },
+            'jsonrpc': '2.0',
+            'id': '0'
+        }
+        return self.rpc.send_json_rpc_request(get_fee_estimate)

@@ -49,10 +49,12 @@
 #include <boost/asio/ssl.hpp>
 #include <boost/array.hpp>
 #include <boost/noncopyable.hpp>
-#include <boost/shared_ptr.hpp>
+#include <boost/shared_ptr.hpp> //! \TODO Convert to std::shared_ptr
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/interprocess/detail/atomic.hpp>
 #include <boost/thread/thread.hpp>
+#include <memory>
+#include "byte_slice.h"
 #include "net_utils_base.h"
 #include "syncobj.h"
 #include "connection_basic.hpp"
@@ -70,7 +72,7 @@ namespace net_utils
 
   struct i_connection_filter
   {
-    virtual bool is_remote_host_allowed(const epee::net_utils::network_address &address)=0;
+    virtual bool is_remote_host_allowed(const epee::net_utils::network_address &address, time_t *t = NULL)=0;
   protected:
     virtual ~i_connection_filter(){}
   };
@@ -90,25 +92,24 @@ namespace net_utils
   public:
     typedef typename t_protocol_handler::connection_context t_connection_context;
 
-    struct shared_state : connection_basic_shared_state
+    struct shared_state : connection_basic_shared_state, t_protocol_handler::config_type
     {
       shared_state()
-        : connection_basic_shared_state(), pfilter(nullptr), config(), stop_signal_sent(false)
+        : connection_basic_shared_state(), t_protocol_handler::config_type(), pfilter(nullptr), stop_signal_sent(false)
       {}
 
       i_connection_filter* pfilter;
-      typename t_protocol_handler::config_type config;
       bool stop_signal_sent;
     };
 
     /// Construct a connection with the given io_service.
     explicit connection( boost::asio::io_service& io_service,
-                        boost::shared_ptr<shared_state> state,
+                        std::shared_ptr<shared_state> state,
 			t_connection_type connection_type,
 			epee::net_utils::ssl_support_t ssl_support);
 
     explicit connection( boost::asio::ip::tcp::socket&& sock,
-			 boost::shared_ptr<shared_state> state,
+			 std::shared_ptr<shared_state> state,
 			t_connection_type connection_type,
 			epee::net_utils::ssl_support_t ssl_support);
 
@@ -135,8 +136,7 @@ namespace net_utils
     
   private:
     //----------------- i_service_endpoint ---------------------
-    virtual bool do_send(const void* ptr, size_t cb); ///< (see do_send from i_service_endpoint)
-    virtual bool do_send_chunk(const void* ptr, size_t cb); ///< will send (or queue) a part of data
+    virtual bool do_send(byte_slice message); ///< (see do_send from i_service_endpoint)
     virtual bool send_done();
     virtual bool close();
     virtual bool call_run_once_service_io();
@@ -145,6 +145,8 @@ namespace net_utils
     virtual bool add_ref();
     virtual bool release();
     //------------------------------------------------------
+    bool do_send_chunk(byte_slice chunk); ///< will send (or queue) a part of data. internal use only
+
     boost::shared_ptr<connection<t_protocol_handler> > safe_shared_from_this();
     bool shutdown();
     /// Handle completion of a receive operation.
@@ -227,8 +229,12 @@ namespace net_utils
     std::map<std::string, t_connection_type> server_type_map;
     void create_server_type_map();
 
-    bool init_server(uint32_t port, const std::string address = "0.0.0.0", ssl_options_t ssl_options = ssl_support_t::e_ssl_support_autodetect);
-    bool init_server(const std::string port,  const std::string& address = "0.0.0.0", ssl_options_t ssl_options = ssl_support_t::e_ssl_support_autodetect);
+    bool init_server(uint32_t port, const std::string& address = "0.0.0.0",
+	uint32_t port_ipv6 = 0, const std::string& address_ipv6 = "::", bool use_ipv6 = false, bool require_ipv4 = true,
+	ssl_options_t ssl_options = ssl_support_t::e_ssl_support_autodetect);
+    bool init_server(const std::string port,  const std::string& address = "0.0.0.0",
+	const std::string port_ipv6 = "", const std::string address_ipv6 = "::", bool use_ipv6 = false, bool require_ipv4 = true,
+	ssl_options_t ssl_options = ssl_support_t::e_ssl_support_autodetect);
 
     /// Run the server's io_service loop.
     bool run_server(size_t threads_count, bool wait = true, const boost::thread::attributes& attrs = boost::thread::attributes());
@@ -265,10 +271,17 @@ namespace net_utils
     typename t_protocol_handler::config_type& get_config_object()
     {
       assert(m_state != nullptr); // always set in constructor
-      return m_state->config;
+      return *m_state;
+    }
+
+    std::shared_ptr<typename t_protocol_handler::config_type> get_config_shared()
+    {
+      assert(m_state != nullptr); // always set in constructor
+      return {m_state};
     }
 
     int get_binded_port(){return m_port;}
+    int get_binded_port_ipv6(){return m_port_ipv6;}
 
     long get_connections_count() const
     {
@@ -339,11 +352,13 @@ namespace net_utils
     /// Run the server's io_service loop.
     bool worker_thread();
     /// Handle completion of an asynchronous accept operation.
-    void handle_accept(const boost::system::error_code& e);
+    void handle_accept_ipv4(const boost::system::error_code& e);
+    void handle_accept_ipv6(const boost::system::error_code& e);
+    void handle_accept(const boost::system::error_code& e, bool ipv6 = false);
 
     bool is_thread_worker();
 
-    const boost::shared_ptr<typename connection<t_protocol_handler>::shared_state> m_state;
+    const std::shared_ptr<typename connection<t_protocol_handler>::shared_state> m_state;
 
     /// The io_service used to perform asynchronous operations.
     struct worker
@@ -360,11 +375,16 @@ namespace net_utils
 
     /// Acceptor used to listen for incoming connections.
     boost::asio::ip::tcp::acceptor acceptor_;
+    boost::asio::ip::tcp::acceptor acceptor_ipv6;
     epee::net_utils::network_address default_remote;
 
     std::atomic<bool> m_stop_signal_sent;
     uint32_t m_port;
+    uint32_t m_port_ipv6;
     std::string m_address;
+    std::string m_address_ipv6;
+    bool m_use_ipv6;
+    bool m_require_ipv4;
     std::string m_thread_name_prefix; //TODO: change to enum server_type, now used
     size_t m_threads_count;
     std::vector<boost::shared_ptr<boost::thread> > m_threads;
@@ -376,6 +396,8 @@ namespace net_utils
 
     /// The next connection to be accepted
     connection_ptr new_connection_;
+    connection_ptr new_connection_ipv6;
+
 
     boost::mutex connections_mutex;
     std::set<connection_ptr> connections_;

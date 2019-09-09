@@ -18,6 +18,8 @@ env:
     - SDK_URL=https://bitcoincore.org/depends-sources/sdks
     - DOCKER_PACKAGES="build-essential libtool cmake autotools-dev automake pkg-config bsdmainutils curl git ca-certificates ccache"
   matrix:
+# RISCV 64bit
+    - HOST=riscv64-linux-gnu PACKAGES="python3 gperf g++-riscv64-linux-gnu"
 # ARM v7
 #    - HOST=arm-linux-gnueabihf PACKAGES="python3 gperf g++-arm-linux-gnueabihf"
 # ARM v8
@@ -49,7 +51,7 @@ before_script:
     - if [ -n "$OSX_SDK" -a -f contrib/depends/sdk-sources/MacOSX${OSX_SDK}.sdk.tar.gz ]; then tar -C contrib/depends/SDKs -xf contrib/depends/sdk-sources/MacOSX${OSX_SDK}.sdk.tar.gz; fi
     - if [[ $HOST = *-mingw32 ]]; then $DOCKER_EXEC bash -c "update-alternatives --set $HOST-g++ \$(which $HOST-g++-posix)"; fi
     - if [[ $HOST = *-mingw32 ]]; then $DOCKER_EXEC bash -c "update-alternatives --set $HOST-gcc \$(which $HOST-gcc-posix)"; fi
-    - if [ -z "$NO_DEPENDS" ]; then $DOCKER_EXEC bash -c "CONFIG_SHELL= make $MAKEJOBS -C contrib/depends HOST=$HOST $DEP_OPTS"; fi
+    - if [ -z "$NO_DEPENDS" ]; then $DOCKER_EXEC bash -c "make $MAKEJOBS -C contrib/depends HOST=$HOST $DEP_OPTS"; fi
 script:
     - git submodule init && git submodule update
     - export TRAVIS_COMMIT_LOG=`git log --format=fuller -1`
