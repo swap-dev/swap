@@ -91,7 +91,7 @@ namespace {
       << "height: " << boost::lexical_cast<std::string>(header.height) << std::endl
       << "depth: " << boost::lexical_cast<std::string>(header.depth) << std::endl
       << "hash: " << header.hash << std::endl
-      << "difficulty: " << header.wide_difficulty << std::endl
+      << "difficulty: " << header.difficulty << std::endl
       << "POW hash: " << header.pow_hash << std::endl
       << "block size: " << header.block_size << std::endl
       << "block weight: " << header.block_weight << std::endl
@@ -786,7 +786,7 @@ bool t_rpc_command_executor::print_blockchain_info(uint64_t start_block_index, u
       << ", size: " << header.block_size << ", weight: " << header.block_weight << " (long term " << header.long_term_weight << "), transactions: " << header.num_txes << std::endl
       << "major version: " << (unsigned)header.major_version << ", minor version: " << (unsigned)header.minor_version << std::endl
       << "block id: " << header.hash << ", previous block id: " << header.prev_hash << std::endl
-      << "difficulty: " << header.wide_difficulty << ", nonce " << header.nonce << ", reward " << cryptonote::print_money(header.reward) << std::endl;
+      << "difficulty: " << header.difficulty << ", nonce " << header.nonce << ", reward " << cryptonote::print_money(header.reward) << std::endl;
     first = false;
   }
 
@@ -2035,7 +2035,7 @@ bool t_rpc_command_executor::print_blockchain_dynamic_stats(uint64_t nblocks)
     }
   }
 
-  tools::msg_writer() << "Height: " << ires.height << ", diff " << ires.wide_difficulty << ", cum. diff " << ires.wide_cumulative_difficulty
+  tools::msg_writer() << "Height: " << ires.height << ", diff " << ires.difficulty << ", cum. diff " << ires.cumulative_difficulty
       << ", target " << ires.target << " sec" << ", dyn fee " << cryptonote::print_money(feres.fee) << "/" << (hfres.enabled ? "byte" : "kB");
 
   if (nblocks > 0)
