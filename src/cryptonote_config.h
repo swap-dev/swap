@@ -141,6 +141,8 @@
 #define P2P_NET_DATA_FILENAME                   "p2pstate.bin"
 #define MINER_CONFIG_FILE_NAME                  "miner_conf.json"
 
+#define RPC_IP_FAILS_BEFORE_BLOCK                       3
+
 #define THREAD_STACK_SIZE                       5 * 1024 * 1024
 
 #define HF_VERSION_MIN_MIXIN_10                 8
