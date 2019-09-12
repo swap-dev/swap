@@ -5379,7 +5379,7 @@ WARNING: Do not reuse your Monero keys on another fork, UNLESS this fork has key
     </message>
     <message>
         <location filename="../src/wallet/wallet2.cpp" line="247"/>
-        <source>Use daemon instance at port &lt;arg&gt; instead of 18081</source>
+        <source>Use daemon instance at port &lt;arg&gt; instead of 19950</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
