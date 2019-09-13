@@ -100,7 +100,7 @@ release-all:
 
 release-static:
 	mkdir -p $(builddir)/release
-	cd $(builddir)/release && cmake -D BUILD_TESTS=ON -D STATIC=ON -D ARCH="x86-64" -D BUILD_64=ON -D CMAKE_BUILD_TYPE=release $(topdir) && $(MAKE)
+	cd $(builddir)/release && cmake -D BUILD_TESTS=ON -D STATIC=ON -D ARCH="x86-64" -D BUILD_64=ON -D CMAKE_BUILD_TYPE=release $(topdir) && $(MAKE) daemon simplewallet blockchain_export blockchain_import
 
 coverage:
 	mkdir -p $(builddir)/debug
@@ -148,7 +148,7 @@ release-static-linux-i686:
 
 release-static-win64:
 	mkdir -p $(builddir)/release
-	cd $(builddir)/release && cmake -G "MSYS Makefiles" -D STATIC=ON -D ARCH="x86-64" -D BUILD_64=ON -D CMAKE_BUILD_TYPE=Release -D BUILD_TAG="win-x64" -D CMAKE_TOOLCHAIN_FILE=$(topdir)/cmake/64-bit-toolchain.cmake -D MSYS2_FOLDER=c:/msys64 $(topdir) && $(MAKE)
+	cd $(builddir)/release && cmake -G "MSYS Makefiles" -D STATIC=ON -D ARCH="x86-64" -D BUILD_64=ON -D CMAKE_BUILD_TYPE=Release -D BUILD_TAG="win-x64" -D CMAKE_TOOLCHAIN_FILE=$(topdir)/cmake/64-bit-toolchain.cmake -D MSYS2_FOLDER=c:/msys64 $(topdir) && $(MAKE) daemon simplewallet blockchain_export blockchain_import
 
 release-static-win32:
 	mkdir -p $(builddir)/release
