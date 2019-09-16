@@ -2283,9 +2283,16 @@ bool simple_wallet::set_default_ring_size(const std::vector<std::string> &args/*
     }
  
     if (ring_size != 0 && ring_size != DEFAULT_MIX+1)
-      message_writer() << tr("WARNING: this is a non default ring size, which may harm your privacy. Default is recommended.");
-    else if (ring_size == DEFAULT_MIX)
-      message_writer() << tr("WARNING: from v8, ring size will be fixed and this setting will be ignored.");
+    {
+      if (m_wallet->use_fork_rules(8, 0))
+      {
+        message_writer() << tr("WARNING: from v8, ring size will be fixed and this setting will be ignored.");
+      }
+      else
+      {
+        message_writer() << tr("WARNING: this is a non default ring size, which may harm your privacy. Default is recommended.");
+      }
+    }
 
     const auto pwd_container = get_and_verify_password();
     if (pwd_container)
@@ -4457,7 +4464,7 @@ boost::optional<epee::wipeable_string> simple_wallet::new_wallet(const boost::pr
   }
   success_msg_writer() << "**********************************************************************";
 
-  return std::move(password);
+  return password;
 }
 //----------------------------------------------------------------------------------------------------
 boost::optional<epee::wipeable_string> simple_wallet::new_wallet(const boost::program_options::variables_map& vm,
@@ -4506,7 +4513,7 @@ boost::optional<epee::wipeable_string> simple_wallet::new_wallet(const boost::pr
   }
 
 
-  return std::move(password);
+  return password;
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -4549,7 +4556,7 @@ boost::optional<epee::wipeable_string> simple_wallet::new_wallet(const boost::pr
     return {};
   }
 
-  return std::move(password);
+  return password;
 }
 //----------------------------------------------------------------------------------------------------
 boost::optional<epee::wipeable_string> simple_wallet::new_wallet(const boost::program_options::variables_map& vm,
@@ -4604,7 +4611,7 @@ boost::optional<epee::wipeable_string> simple_wallet::new_wallet(const boost::pr
     return {};
   }
 
-  return std::move(password);
+  return password;
 }
 //----------------------------------------------------------------------------------------------------
 boost::optional<epee::wipeable_string> simple_wallet::open_wallet(const boost::program_options::variables_map& vm)
@@ -4707,7 +4714,7 @@ boost::optional<epee::wipeable_string> simple_wallet::open_wallet(const boost::p
     tr("Use the \"help\" command to see the list of available commands.\n") <<
     tr("Use \"help <command>\" to see a command's documentation.\n") <<
     "**********************************************************************";
-  return std::move(password);
+  return password;
 }
 //----------------------------------------------------------------------------------------------------
 bool simple_wallet::close_wallet()
@@ -5870,14 +5877,11 @@ bool simple_wallet::transfer_main(int transfer_type, const std::vector<std::stri
 
   priority = m_wallet->adjust_priority(priority);
 
-  size_t fake_outs_count = 0;
+  size_t fake_outs_count = DEFAULT_MIX;
   if(local_args.size() > 0) {
     size_t ring_size;
     if(!epee::string_tools::get_xtype_from_string(ring_size, local_args[0]))
     {
-      fake_outs_count = m_wallet->default_mixin();
-      if (fake_outs_count == 0)
-        fake_outs_count = DEFAULT_MIX;
     }
     else if (ring_size == 0)
     {
@@ -6491,14 +6495,11 @@ bool simple_wallet::sweep_main(uint64_t below, bool locked, const std::vector<st
 
   priority = m_wallet->adjust_priority(priority);
 
-  size_t fake_outs_count = 0;
+  size_t fake_outs_count = DEFAULT_MIX;
   if(local_args.size() > 0) {
     size_t ring_size;
     if(!epee::string_tools::get_xtype_from_string(ring_size, local_args[0]))
     {
-      fake_outs_count = m_wallet->default_mixin();
-      if (fake_outs_count == 0)
-        fake_outs_count = DEFAULT_MIX;
     }
     else if (ring_size == 0)
     {
@@ -6790,14 +6791,11 @@ bool simple_wallet::sweep_single(const std::vector<std::string> &args_)
 
   priority = m_wallet->adjust_priority(priority);
 
-  size_t fake_outs_count = 0;
+  size_t fake_outs_count = DEFAULT_MIX;
   if(local_args.size() > 0) {
     size_t ring_size;
     if(!epee::string_tools::get_xtype_from_string(ring_size, local_args[0]))
     {
-      fake_outs_count = m_wallet->default_mixin();
-      if (fake_outs_count == 0)
-        fake_outs_count = DEFAULT_MIX;
     }
     else if (ring_size == 0)
     {
