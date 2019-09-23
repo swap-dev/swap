@@ -145,7 +145,7 @@ namespace
     boost::filesystem::path dir = tools::get_default_data_dir();
     // remove .bitmonero, replace with .shared-ringdb
     dir = dir.remove_filename();
-    dir /= ".shared-ringdb";
+    dir /= ".swap/shared-ringdb"; // use swap own ringdb path, stop conflicting with other monero's clones  
     return dir.string();
   }
 
