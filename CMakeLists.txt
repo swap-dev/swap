@@ -448,7 +448,6 @@ ExternalProject_Add(generate_translations_header
   CMAKE_ARGS -DLRELEASE_PATH=${LRELEASE_PATH}
   INSTALL_COMMAND cmake -E echo "")
 include_directories("${CMAKE_CURRENT_BINARY_DIR}/translations")
-add_subdirectory(external)
 
 # Final setup for libunbound
 include_directories(${UNBOUND_INCLUDE})
@@ -999,3 +998,15 @@ option(INSTALL_VENDORED_LIBUNBOUND "Install libunbound binary built from source 
 
 
 CHECK_C_COMPILER_FLAG(-std=c11 HAVE_C11)
+
+find_package(PythonInterp)
+find_program(iwyu_tool_path NAMES iwyu_tool.py iwyu_tool)
+if (iwyu_tool_path AND PYTHONINTERP_FOUND)
+  add_custom_target(iwyu
+    COMMAND "${PYTHON_EXECUTABLE}" "${iwyu_tool_path}" -p "${CMAKE_BINARY_DIR}" -- --no_fwd_decls
+    COMMENT "Running include-what-you-use tool"
+    VERBATIM
+  )
+endif()
+
+add_subdirectory(external)
