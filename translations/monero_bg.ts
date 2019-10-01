@@ -1519,6 +1519,7 @@ If the &quot;tag_description&quot; argument is specified, the tag &lt;tag_name&g
         <source>Print all entries in the address book, optionally adding/deleting an entry to/from it.</source>
         <translation type="unfinished"></translation>
     </message>
+	<message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="2883"/>
         <source>Donate &lt;amount&gt; to the development team (donate.xwp.fyi).</source>
         <source>Save a watch-only keys file.</source>
@@ -1812,6 +1813,7 @@ Key Image, &quot;absolute&quot;, list of rings</source>
         <source>Wallet name not valid. Please try again or use Ctrl-C to quit.</source>
         <location filename="../src/simplewallet/simplewallet.cpp" line="3301"/>
         <source>Prints basic info about Swap for first time users</source>
+	</message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="3510"/>
         <source>Wallet and key files found, loading...</source>
@@ -3952,6 +3954,7 @@ Transaction </source>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="10175"/>
         <source>Wallet state does not allow changing Swap addresses anymore</source>
+	</message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="10614"/>
         <source>Usage: mms send_signer_config</source>
@@ -5408,7 +5411,8 @@ WARNING: Do not reuse your Swap keys on another fork, UNLESS this fork has key r
         <location filename="../src/wallet/wallet2.cpp" line="264"/>
         <source>For stagenet. Daemon must also be launched with --stagenet flag</source>
         <location filename="../src/simplewallet/simplewallet.cpp" line="9760"/>
-        <source>This is the command line  wallet. It needs to connect to a 
+        <source>This is the command line  wallet. It needs to connect to a Swap daemon to work.</source>
+	</message>
     <message>
         <location filename="../src/wallet/wallet2.cpp" line="277"/>
         <source>Number of rounds for the key derivation function</source>
@@ -5429,6 +5433,7 @@ WARNING: Do not reuse your Swap keys on another fork, UNLESS this fork has key r
         <source>Do not use DNS</source>
         <translation type="unfinished"></translation>
     </message>
+	<message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="154"/>
         <source>The newly created transaction will not be relayed to the  network</source>
         <source>File containing extra entropy to initialize the PRNG (any data, aim for 256 bits of entropy to be useful, wihch typically means more than 256 bits of data)</source>
@@ -5804,5 +5809,3 @@ daemon to work correctly.</source>
     </message>
 </context>
 </TS>
-        <location filename="../src/wallet/wallet_rpc_server.cpp" line="4395"/>
-        <source>This is the RPC  wallet. It needs to connect to a 
