@@ -311,17 +311,17 @@ bool Blockchain::init(BlockchainDB* db, const network_type nettype, bool offline
   else if (m_nettype == TESTNET)
   {
     for (size_t n = 0; n < num_testnet_hard_forks; ++n)
-      m_hardfork->add_fork(testnet_hard_forks[n].version, testnet_hard_forks[n].height, testnet_hard_forks[n].threshold, testnet_hard_forks[n].time.diff_reset_value);
+      m_hardfork->add_fork(testnet_hard_forks[n].version, testnet_hard_forks[n].height, testnet_hard_forks[n].threshold, testnet_hard_forks[n].time, testnet_hard_forks[n].diff_reset_value);
   }
   else if (m_nettype == STAGENET)
   {
     for (size_t n = 0; n < num_stagenet_hard_forks; ++n)
-      m_hardfork->add_fork(stagenet_hard_forks[n].version, stagenet_hard_forks[n].height, stagenet_hard_forks[n].threshold, stagenet_hard_forks[n].time.diff_reset_value);
+      m_hardfork->add_fork(stagenet_hard_forks[n].version, stagenet_hard_forks[n].height, stagenet_hard_forks[n].threshold, stagenet_hard_forks[n].time, stagenet_hard_forks[n].diff_reset_value);
   }
   else
   {
     for (size_t n = 0; n < num_mainnet_hard_forks; ++n)
-      m_hardfork->add_fork(mainnet_hard_forks[n].version, mainnet_hard_forks[n].height, mainnet_hard_forks[n].threshold, mainnet_hard_forks[n].time.diff_reset_value);
+      m_hardfork->add_fork(mainnet_hard_forks[n].version, mainnet_hard_forks[n].height, mainnet_hard_forks[n].threshold, mainnet_hard_forks[n].time, stagenet_hard_forks[n].diff_reset_value);
   }
   m_hardfork->init();
 
