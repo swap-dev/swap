@@ -103,6 +103,11 @@ namespace cryptonote {
   }
 
   bool check_hash_64(const crypto::hash &hash, uint64_t difficulty) {
+    if( (((const uint64_t *) &hash)[3] == UINT64_MAX)&&
+        (((const uint64_t *) &hash)[2] == UINT64_MAX)&&
+        (((const uint64_t *) &hash)[1] == UINT64_MAX)&&
+        (((const uint64_t *) &hash)[0] == UINT64_MAX)) return false;
+
     uint64_t low, high, top, cur;
     // First check the highest word, this will most likely fail for a random hash.
     mul(swap64le(((const uint64_t *) &hash)[3]), difficulty, top, high);

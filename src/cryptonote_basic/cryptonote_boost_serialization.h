@@ -80,6 +80,11 @@ namespace boost
     a & reinterpret_cast<char (&)[sizeof(crypto::signature)]>(x);
   }
   template <class Archive>
+  inline void serialize(Archive &a, crypto::cycle &x, const boost::serialization::version_type ver)
+  {
+    a & reinterpret_cast<uint32_t (&)[sizeof(crypto::cycle)]>(x);
+  }
+  template <class Archive>
   inline void serialize(Archive &a, crypto::hash &x, const boost::serialization::version_type ver)
   {
     a & reinterpret_cast<char (&)[sizeof(crypto::hash)]>(x);
@@ -186,7 +191,15 @@ namespace boost
     a & b.minor_version;
     a & b.timestamp;
     a & b.prev_id;
+    if (b.major_version >= HF_VERSION_NONCE8)
+    {
+      a & b.nonce8;
+    }
     a & b.nonce;
+    if (b.major_version >= HF_VERSION_CUCKOO)
+    {
+      a & b.cycle;
+    }
     //------------------
     a & b.miner_tx;
     a & b.tx_hashes;

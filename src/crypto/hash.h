@@ -46,6 +46,10 @@ namespace crypto {
   }
 
 #pragma pack(push, 1)
+  POD_CLASS cycle {
+    public:
+    uint32_t data[32];
+  };
   POD_CLASS hash {
     char data[HASH_SIZE];
   };
