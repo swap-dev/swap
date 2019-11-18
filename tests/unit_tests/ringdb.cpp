@@ -89,10 +89,10 @@ private:
     boost::filesystem::path path =
       boost::filesystem::temp_directory_path();
 #if defined(__MINGW32__) || defined(__MINGW__)
-    filename = tempnam(path.string().c_str(), "monero-ringdb-test-");
+    filename = tempnam(path.string().c_str(), "swap-ringdb-test-");
     EXPECT_TRUE(filename != NULL);
 #else
-    path /= "monero-ringdb-test-XXXXXX";
+    path /= "swap-ringdb-test-XXXXXX";
     filename = strdup(path.string().c_str());
     EXPECT_TRUE(mkdtemp(filename) != NULL);
 #endif
