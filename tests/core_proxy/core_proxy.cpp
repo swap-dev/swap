@@ -203,6 +203,8 @@ bool tests::proxy_core::handle_incoming_txs(const std::vector<tx_blob_entry>& tx
     return true;
 }
 
+static cn_pow_hash_v3 m_pow_ctx;
+
 bool tests::proxy_core::handle_incoming_block(const cryptonote::blobdata& block_blob, const cryptonote::block *block_, cryptonote::block_verification_context& bvc, bool update_miner_blocktemplate) {
     block b = AUTO_VAL_INIT(b);
 
