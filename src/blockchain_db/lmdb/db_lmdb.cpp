@@ -786,7 +786,7 @@ void BlockchainLMDB::add_block(const block& blk, size_t block_weight, uint64_t l
   bi.bi_diff_lo = (cumulative_difficulty & 0xffffffffffffffff).convert_to<uint64_t>();
   bi.bi_hash = blk_hash;
   bi.bi_cum_rct = num_rct_outs;
-  if (blk.major_version >= 4)
+  if (m_height > 0)
   {
     uint64_t last_height = m_height-1;
     MDB_val_set(h, last_height);
@@ -5419,7 +5419,7 @@ void BlockchainLMDB::migrate_3_4()
       if (past_long_term_weight)
       {
         std::vector<uint64_t> weights(long_term_block_weights.begin(), long_term_block_weights.end());
-        uint64_t long_term_effective_block_median_weight = std::max<uint64_t>(CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V5, epee::misc_utils::median(weights));
+        uint64_t long_term_effective_block_median_weight = std::max<uint64_t>(CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE, epee::misc_utils::median(weights));
         long_term_block_weight = std::min<uint64_t>(bi.bi_weight, long_term_effective_block_median_weight + long_term_effective_block_median_weight * 2 / 5);
       }
       else

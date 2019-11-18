@@ -806,7 +806,7 @@ namespace cryptonote
     bad_semantics_txes_lock.unlock();
 
     uint8_t version = m_blockchain_storage.get_current_hard_fork_version();
-    const size_t max_tx_version = version == 1 ? 1 : 2;
+    const size_t max_tx_version = 2;
     if (tx.version == 0 || tx.version > max_tx_version)
     {
       // v2 is the latest one we know
@@ -1207,16 +1207,12 @@ namespace cryptonote
   //-----------------------------------------------------------------------------------------------
   bool core::check_tx_inputs_ring_members_diff(const transaction& tx) const
   {
-    const uint8_t version = m_blockchain_storage.get_current_hard_fork_version();
-    if (version >= 6)
+    for(const auto& in: tx.vin)
     {
-      for(const auto& in: tx.vin)
-      {
-        CHECKED_GET_SPECIFIC_VARIANT(in, const txin_to_key, tokey_in, false);
-        for (size_t n = 1; n < tokey_in.key_offsets.size(); ++n)
-          if (tokey_in.key_offsets[n] == 0)
-            return false;
-      }
+      CHECKED_GET_SPECIFIC_VARIANT(in, const txin_to_key, tokey_in, false);
+      for (size_t n = 1; n < tokey_in.key_offsets.size(); ++n)
+        if (tokey_in.key_offsets[n] == 0)
+          return false;
     }
     return true;
   }

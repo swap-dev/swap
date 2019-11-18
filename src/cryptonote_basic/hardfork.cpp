@@ -40,12 +40,6 @@ using namespace cryptonote;
 
 static uint8_t get_block_vote(const cryptonote::block &b)
 {
-  // Pre-hardfork blocks have a minor version hardcoded to 0.
-  // For the purposes of voting, we consider 0 to refer to
-  // version number 1, which is what all blocks from the genesis
-  // block are. It makes things simpler.
-  if (b.minor_version == 0)
-    return 1;
   return b.minor_version;
 }
 
@@ -70,7 +64,7 @@ HardFork::HardFork(cryptonote::BlockchainDB &db, uint8_t original_version, uint6
     throw "default_threshold_percent needs to be between 0 and 100";
 }
 
-bool HardFork::add_fork(uint8_t version, uint64_t height, uint8_t threshold, time_t time)
+bool HardFork::add_fork(uint8_t version, uint64_t height, uint8_t threshold, time_t time, difficulty_type diff_reset_value)
 {
   CRITICAL_REGION_LOCAL(lock);
 
@@ -87,7 +81,7 @@ bool HardFork::add_fork(uint8_t version, uint64_t height, uint8_t threshold, tim
   }
   if (threshold > 100)
     return false;
-  heights.push_back(hardfork_t(version, height, threshold, time));
+  heights.push_back(hardfork_t(version, height, threshold, time, diff_reset_value));
   return true;
 }
 
@@ -171,7 +165,7 @@ void HardFork::init()
 
   // add a placeholder for the default version, to avoid special cases
   if (heights.empty())
-    heights.push_back(hardfork_t(original_version, 0, 0, 0));
+    heights.push_back(hardfork_t(original_version, 0, 0, 0, 0));
 
   versions.clear();
   for (size_t n = 0; n < 256; ++n)
@@ -403,6 +397,28 @@ uint8_t HardFork::get_next_version() const
     }
   }
   return original_version;
+}
+
+uint64_t HardFork::get_last_diff_reset_height(uint64_t height) const
+{
+  for (auto i = heights.rbegin(); i != heights.rend(); ++i) {
+    if (height < i->height)
+      continue;
+    if (i->diff_reset_value > 0)
+      return i->height;
+  }
+  return 0;
+}
+
+difficulty_type HardFork::get_last_diff_reset_value(uint64_t height) const
+{
+  for (auto i = heights.rbegin(); i != heights.rend(); ++i) {
+    if (height < i->height)
+      continue;
+    if (i->diff_reset_value > 0)
+      return i->diff_reset_value;
+  }
+  return 0;
 }
 
 bool HardFork::get_voting_info(uint8_t version, uint32_t &window, uint32_t &votes, uint32_t &threshold, uint64_t &earliest_height, uint8_t &voting) const
