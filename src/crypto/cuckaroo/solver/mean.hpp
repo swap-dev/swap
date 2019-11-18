@@ -733,9 +733,6 @@ void *etworker(void *vp) {
 
 #define NODEBITS (EDGEBITS + 1)
 
-// grow with cube root of size, hardly affected by trimming
-const u32 MAXPATHLEN = 16 << (EDGEBITS/3);
-
 int nonce_cmp(const void *a, const void *b) {
   return *(u32 *)a - *(u32 *)b;
 }
