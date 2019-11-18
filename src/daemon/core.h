@@ -70,7 +70,32 @@ public:
     {
       throw std::runtime_error("Failed to initialize core");
     }
-    MGINFO("Core initialized OK");
+    MGINFO("Core initialized OK" << ENDL
+    << "                                                " << ENDL
+    << "                                                " << ENDL
+    << "                  @@@@@@@@@@@@@@/               " << ENDL
+    << "              @@@                %@@*           " << ENDL
+    << "           @@(                       @@         " << ENDL
+    << "         @@                            @@       " << ENDL
+    << "       .@*                     &@        @@     " << ENDL
+    << "      (@                         @@       @@    " << ENDL
+    << "     *@       @@@@@          .@@@@@@       @@   " << ENDL
+    << "     @             @@.     %@%  @@          @#  " << ENDL
+    << "    @@               @@   @@                .@  " << ENDL
+    << "    @#                   @%                  @. " << ENDL
+    << "    @,                 /@                    @/ " << ENDL
+    << "    @#                @@                     @. " << ENDL
+    << "    @@               @@   @@                .@  " << ENDL
+    << "     @             &@(     @@,  @@          @%  " << ENDL
+    << "     ,@       @@@@@          .@@@@@@       @@   " << ENDL
+    << "      #@                         @@       @@    " << ENDL
+    << "        @(                     %@        @@     " << ENDL
+    << "         @@                            @@       " << ENDL
+    << "           @@%                       @@         " << ENDL
+    << "              @@@                &@@.           " << ENDL
+    << "                  @@@@@@@@@@@@@@,               " << ENDL
+    << "                                                " << ENDL
+    << "                                                " << ENDL);
   }
 
   // TODO - get rid of circular dependencies in internals
