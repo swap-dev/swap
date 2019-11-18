@@ -273,15 +273,17 @@ void toJsonValue(rapidjson::Writer<epee::byte_stream>& dest, const cryptonote::b
 {
   dest.StartObject();
 
-  INSERT_INTO_JSON_OBJECT(dest, major_version, b.major_version);
-  INSERT_INTO_JSON_OBJECT(dest, minor_version, b.minor_version);
-  INSERT_INTO_JSON_OBJECT(dest, timestamp, b.timestamp);
-  INSERT_INTO_JSON_OBJECT(dest, prev_id, b.prev_id);
-  INSERT_INTO_JSON_OBJECT(dest, nonce, b.nonce);
-  INSERT_INTO_JSON_OBJECT(dest, miner_tx, b.miner_tx);
-  INSERT_INTO_JSON_OBJECT(dest, tx_hashes, b.tx_hashes);
+  INSERT_INTO_JSON_OBJECT(val, doc, major_version, b.major_version);
+  INSERT_INTO_JSON_OBJECT(val, doc, minor_version, b.minor_version);
+  INSERT_INTO_JSON_OBJECT(val, doc, timestamp, b.timestamp);
+  INSERT_INTO_JSON_OBJECT(val, doc, prev_id, b.prev_id);
+  INSERT_INTO_JSON_OBJECT(val, doc, nonce8, b.nonce8);
+  INSERT_INTO_JSON_OBJECT(val, doc, nonce, b.nonce);
+  INSERT_INTO_JSON_OBJECT(val, doc, cycle, b.cycle);
+  INSERT_INTO_JSON_OBJECT(val, doc, miner_tx, b.miner_tx);
+  INSERT_INTO_JSON_OBJECT(val, doc, tx_hashes, b.tx_hashes);
 
-  dest.EndObject();
+  val.EndObject();
 }
 
 
@@ -296,7 +298,9 @@ void fromJsonValue(const rapidjson::Value& val, cryptonote::block& b)
   GET_FROM_JSON_OBJECT(val, b.minor_version, minor_version);
   GET_FROM_JSON_OBJECT(val, b.timestamp, timestamp);
   GET_FROM_JSON_OBJECT(val, b.prev_id, prev_id);
+  GET_FROM_JSON_OBJECT(val, b.nonce8, nonce8);
   GET_FROM_JSON_OBJECT(val, b.nonce, nonce);
+  GET_FROM_JSON_OBJECT(val, b.cycle, cycle);
   GET_FROM_JSON_OBJECT(val, b.miner_tx, miner_tx);
   GET_FROM_JSON_OBJECT(val, b.tx_hashes, tx_hashes);
 }

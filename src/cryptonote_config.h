@@ -156,8 +156,10 @@
 
 #define HF_VERSION_MIN_MIXIN_10                 8
 #define HF_VERSION_PER_BYTE_FEE                 8
+#define HF_VERSION_CUCKOO                       10
 #define HF_VERSION_SMALLER_BP                   11
 #define HF_VERSION_LONG_TERM_BLOCK_WEIGHT       11
+#define HF_VERSION_NONCE8                       11
 #define HF_VERSION_MIN_2_OUTPUTS                12
 #define HF_VERSION_MIN_V2_COINBASE_TX           12
 #define HF_VERSION_SAME_MIXIN                   12
