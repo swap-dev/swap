@@ -57,47 +57,47 @@ namespace
 
   TEST_F(fee, 10xmr)
   {
-    // CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2 and lower are clamped
-    ASSERT_EQ(Blockchain::get_dynamic_base_fee(10000000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2, 3), clamp_fee(2000000000));
-    ASSERT_EQ(Blockchain::get_dynamic_base_fee(10000000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2 / 2, 3), clamp_fee(2000000000));
-    ASSERT_EQ(Blockchain::get_dynamic_base_fee(10000000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2 / 100, 3), clamp_fee(2000000000));
+    // CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE and lower are clamped
+    ASSERT_EQ(Blockchain::get_dynamic_base_fee(10000000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE, 3), clamp_fee(2000000000));
+    ASSERT_EQ(Blockchain::get_dynamic_base_fee(10000000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE / 2, 3), clamp_fee(2000000000));
+    ASSERT_EQ(Blockchain::get_dynamic_base_fee(10000000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE / 100, 3), clamp_fee(2000000000));
     ASSERT_EQ(Blockchain::get_dynamic_base_fee(10000000000000, 1, 3), 2000000000);
 
     // higher is inverse proportional
-    ASSERT_EQ(Blockchain::get_dynamic_base_fee(10000000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2 * 2, 3), clamp_fee(2000000000 / 2));
-    ASSERT_EQ(Blockchain::get_dynamic_base_fee(10000000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2 * 10, 3), clamp_fee(2000000000 / 10));
-    ASSERT_EQ(Blockchain::get_dynamic_base_fee(10000000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2 * 1000, 3), clamp_fee(2000000000 / 1000));
-    ASSERT_EQ(Blockchain::get_dynamic_base_fee(10000000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2 * 20000ull, 3), clamp_fee(2000000000 / 20000));
+    ASSERT_EQ(Blockchain::get_dynamic_base_fee(10000000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE * 2, 3), clamp_fee(2000000000 / 2));
+    ASSERT_EQ(Blockchain::get_dynamic_base_fee(10000000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE * 10, 3), clamp_fee(2000000000 / 10));
+    ASSERT_EQ(Blockchain::get_dynamic_base_fee(10000000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE * 1000, 3), clamp_fee(2000000000 / 1000));
+    ASSERT_EQ(Blockchain::get_dynamic_base_fee(10000000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE * 20000ull, 3), clamp_fee(2000000000 / 20000));
   }
 
   TEST_F(fee, 1xmr)
   {
-    // CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2 and lower are clamped
-    ASSERT_EQ(Blockchain::get_dynamic_base_fee(1000000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2, 3), clamp_fee(200000000));
-    ASSERT_EQ(Blockchain::get_dynamic_base_fee(1000000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2 / 2, 3), clamp_fee(200000000));
-    ASSERT_EQ(Blockchain::get_dynamic_base_fee(1000000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2 / 100, 3), clamp_fee(200000000));
+    // CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE and lower are clamped
+    ASSERT_EQ(Blockchain::get_dynamic_base_fee(1000000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE, 3), clamp_fee(200000000));
+    ASSERT_EQ(Blockchain::get_dynamic_base_fee(1000000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE / 2, 3), clamp_fee(200000000));
+    ASSERT_EQ(Blockchain::get_dynamic_base_fee(1000000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE / 100, 3), clamp_fee(200000000));
     ASSERT_EQ(Blockchain::get_dynamic_base_fee(1000000000000, 1, 3), 200000000);
 
     // higher is inverse proportional
-    ASSERT_EQ(Blockchain::get_dynamic_base_fee(1000000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2 * 2, 3), clamp_fee(200000000 / 2));
-    ASSERT_EQ(Blockchain::get_dynamic_base_fee(1000000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2 * 10, 3), clamp_fee(200000000 / 10));
-    ASSERT_EQ(Blockchain::get_dynamic_base_fee(1000000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2 * 1000, 3), clamp_fee(200000000 / 1000));
-    ASSERT_EQ(Blockchain::get_dynamic_base_fee(1000000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2 * 20000ull, 3), clamp_fee(200000000 / 20000));
+    ASSERT_EQ(Blockchain::get_dynamic_base_fee(1000000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE * 2, 3), clamp_fee(200000000 / 2));
+    ASSERT_EQ(Blockchain::get_dynamic_base_fee(1000000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE * 10, 3), clamp_fee(200000000 / 10));
+    ASSERT_EQ(Blockchain::get_dynamic_base_fee(1000000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE * 1000, 3), clamp_fee(200000000 / 1000));
+    ASSERT_EQ(Blockchain::get_dynamic_base_fee(1000000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE * 20000ull, 3), clamp_fee(200000000 / 20000));
   }
 
   TEST_F(fee, dot3xmr)
   {
-    // CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2 and lower are clamped
-    ASSERT_EQ(Blockchain::get_dynamic_base_fee(300000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2, 3), clamp_fee(60000000));
-    ASSERT_EQ(Blockchain::get_dynamic_base_fee(300000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2 / 2, 3), clamp_fee(60000000));
-    ASSERT_EQ(Blockchain::get_dynamic_base_fee(300000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2 / 100, 3), clamp_fee(60000000));
+    // CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE and lower are clamped
+    ASSERT_EQ(Blockchain::get_dynamic_base_fee(300000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE, 3), clamp_fee(60000000));
+    ASSERT_EQ(Blockchain::get_dynamic_base_fee(300000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE / 2, 3), clamp_fee(60000000));
+    ASSERT_EQ(Blockchain::get_dynamic_base_fee(300000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE / 100, 3), clamp_fee(60000000));
     ASSERT_EQ(Blockchain::get_dynamic_base_fee(300000000000, 1, 3), 60000000);
 
     // higher is inverse proportional
-    ASSERT_EQ(Blockchain::get_dynamic_base_fee(300000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2 * 2, 3), clamp_fee(60000000 / 2));
-    ASSERT_EQ(Blockchain::get_dynamic_base_fee(300000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2 * 10, 3), clamp_fee(60000000 / 10));
-    ASSERT_EQ(Blockchain::get_dynamic_base_fee(300000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2 * 1000, 3), clamp_fee(60000000 / 1000));
-    ASSERT_EQ(Blockchain::get_dynamic_base_fee(300000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2 * 20000ull, 3), clamp_fee(60000000 / 20000));
+    ASSERT_EQ(Blockchain::get_dynamic_base_fee(300000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE * 2, 3), clamp_fee(60000000 / 2));
+    ASSERT_EQ(Blockchain::get_dynamic_base_fee(300000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE * 10, 3), clamp_fee(60000000 / 10));
+    ASSERT_EQ(Blockchain::get_dynamic_base_fee(300000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE * 1000, 3), clamp_fee(60000000 / 1000));
+    ASSERT_EQ(Blockchain::get_dynamic_base_fee(300000000000, CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE * 20000ull, 3), clamp_fee(60000000 / 20000));
   }
 
   static bool is_more_or_less(double x, double y)
@@ -117,12 +117,12 @@ namespace
       300000000000ull, // .3 monero, minimum reward per block at 1min
     };
     static const uint64_t median_block_weights[] = {
-      CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2,
-      CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2 * 2,
-      CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2 * 10,
-      CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2 * 1000,
+      CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE,
+      CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE * 2,
+      CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE * 10,
+      CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE * 1000,
       // with clamping, the formula does not hold for such large blocks and small fees
-      // CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2 * 20000ull
+      // CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE * 20000ull
     };
 
     for (uint64_t block_reward: block_rewards)
