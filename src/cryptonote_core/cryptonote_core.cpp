@@ -1862,6 +1862,7 @@ namespace cryptonote
       MDEBUG("Not checking block rate, offline or syncing");
       return true;
     }
+    return true;
 
     static constexpr double threshold = 1. / (864000 / DIFFICULTY_TARGET); // one false positive every 10 days
     static constexpr unsigned int max_blocks_checked = 150;
