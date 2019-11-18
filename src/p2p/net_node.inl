@@ -599,15 +599,25 @@ namespace nodetool
     std::set<std::string> full_addrs;
     if (nettype == cryptonote::TESTNET)
     {
+      full_addrs.insert("seed-t.xwp.one:29949");
     }
     else if (nettype == cryptonote::STAGENET)
     {
+      full_addrs.insert("seed-s.xwp.one:39949");
     }
     else if (nettype == cryptonote::FAKECHAIN)
     {
     }
     else
     {
+      full_addrs.insert("66.70.141.138:19949");  // lfy
+      full_addrs.insert("58.185.155.109:19949"); // reeyon
+      full_addrs.insert("54.36.111.41:19949");   // nick
+      full_addrs.insert("147.135.138.110:19949");// seb
+      full_addrs.insert("94.23.159.182:19949");  // seb
+      full_addrs.insert("seed1.xwp.one:19949");
+      full_addrs.insert("seed2.xwp.one:19949");
+      full_addrs.insert("seed3.xwp.one:19949");
     }
     return full_addrs;
   }
