@@ -37,6 +37,7 @@
 #include "generic-ops.h"
 #include "hex.h"
 #include "span.h"
+#include "crypto/cn_slow_hash.hpp"
 
 namespace crypto {
 

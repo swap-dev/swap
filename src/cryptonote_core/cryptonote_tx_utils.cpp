@@ -624,7 +624,8 @@ namespace cryptonote
     bl.timestamp = 0;
     bl.nonce = nonce;
     miner::find_nonce_for_given_block([](const cryptonote::block &b, uint64_t height, unsigned int threads, crypto::hash &hash){
-      return cryptonote::get_block_longhash(NULL, b, hash, height, threads);
+      cn_pow_hash_v3 ctx;
+	  return cryptonote::get_block_longhash(NULL, b, hash, height, threads, ctx);
     }, bl, 1, 0);
     bl.invalidate_hashes();
     return true;
@@ -636,36 +637,17 @@ namespace cryptonote
     rx_slow_hash(main_height, seed_height, seed_hash.data, bd.data(), bd.size(), res.data, 0, 1);
   }
 
-  bool get_block_longhash(const Blockchain *pbc, const block& b, crypto::hash& res, const uint64_t height, const int miners)
+  bool get_block_longhash(const Blockchain *pbc, const block& b, crypto::hash& res, const uint64_t height, const int miners, cn_pow_hash_v3& ctx)
   {
     blobdata bd = get_block_hashing_blob(b);
-    if (b.major_version >= RX_BLOCK_VERSION)
-    {
-      uint64_t seed_height, main_height;
-      crypto::hash hash;
-      if (pbc != NULL)
-      {
-        seed_height = rx_seedheight(height);
-        hash = pbc->get_pending_block_id_by_height(seed_height);
-        main_height = pbc->get_current_blockchain_height();
-      } else
-      {
-        memset(&hash, 0, sizeof(hash));  // only happens when generating genesis block
-        seed_height = 0;
-        main_height = 0;
-      }
-      rx_slow_hash(main_height, seed_height, hash.data, bd.data(), bd.size(), res.data, miners, 0);
-    } else {
-      const int pow_variant = b.major_version >= 7 ? b.major_version - 6 : 0;
-      crypto::cn_slow_hash(bd.data(), bd.size(), res, pow_variant, height);
-    }
+    ctx.hash(bd.data(), bd.size(), res.data);
     return true;
   }
 
-  crypto::hash get_block_longhash(const Blockchain *pbc, const block& b, const uint64_t height, const int miners)
+  crypto::hash get_block_longhash(const Blockchain *pbc, const block& b, const uint64_t height, const int miners, cn_pow_hash_v3& ctx)
   {
     crypto::hash p = crypto::null_hash;
-    get_block_longhash(pbc, b, p, height, miners);
+    get_block_longhash(pbc, b, p, height, miners, ctx);
     return p;
   }
 
