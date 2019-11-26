@@ -369,7 +369,7 @@ bool t_rpc_command_executor::show_difficulty() {
                               << ", TH: " << res.top_block_hash
                               << ", DIFF: " << cryptonote::difficulty_type(res.wide_difficulty)
                               << ", CUM_DIFF: " << cryptonote::difficulty_type(res.wide_cumulative_difficulty)
-                              << ", HR: " << cryptonote::difficulty_type(res.wide_difficulty) / res.target << " H/s";
+                              << ", HR: " << cryptonote::difficulty_type(res.wide_difficulty) * 32 / res.target << " G/s";
 
   return true;
 }
