@@ -234,6 +234,8 @@ void test_generator::add_block(const cryptonote::block& blk, size_t txs_weight, 
   m_blocks_info[get_block_hash(blk)] = block_info(blk.prev_id, already_generated_coins + block_reward, block_weight);
 }
 
+static cn_pow_hash_v3 m_pow_ctx;
+
 bool test_generator::construct_block(cryptonote::block& blk, uint64_t height, const crypto::hash& prev_id,
                                      const cryptonote::account_base& miner_acc, uint64_t timestamp, uint64_t already_generated_coins,
                                      std::vector<size_t>& block_weights, const std::list<cryptonote::transaction>& tx_list,
