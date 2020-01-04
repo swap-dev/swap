@@ -615,9 +615,9 @@ namespace nodetool
     else
     {
       full_addrs.insert("58.185.155.109:19949"); // reeyon
-      full_addrs.insert("54.36.111.41:19949");   // nick
-      full_addrs.insert("147.135.138.110:19949");// seb
-      full_addrs.insert("94.23.159.182:19949");  // seb
+      full_addrs.insert("172.105.126.220:19949"); // SG
+      full_addrs.insert("176.58.102.113:19949");  // UK
+      full_addrs.insert("192.155.82.50:19949");   // CA
       full_addrs.insert("seed1.xwp.one:19949");
       full_addrs.insert("seed2.xwp.one:19949");
       full_addrs.insert("seed3.xwp.one:19949");
