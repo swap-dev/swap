@@ -27,7 +27,6 @@
 # THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 set(crypto_sources
-  cuckaroo/solver/mean.cpp
   cuckaroo/cuckaroo29s.cpp
   cuckaroo/blake2b-ref.c
   aesb.c
@@ -64,13 +63,6 @@ include_directories(${RANDOMX_INCLUDE})
 set(crypto_headers)
 
 set(crypto_private_headers
-  cuckaroo/solver/barrier.hpp
-  cuckaroo/solver/bitmap.hpp
-  cuckaroo/solver/compress.hpp
-  cuckaroo/solver/cuckaroo.hpp
-  cuckaroo/solver/graph.hpp
-  cuckaroo/solver/mean.hpp
-  cuckaroo/solver/siphash.hpp
   cuckaroo/cuckaroo29s.h
   cuckaroo/blake2.h
   cuckaroo/blake2-impl.h
