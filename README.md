@@ -3,6 +3,8 @@
 Copyright (c) 2014-2019 The Monero Project.   
 Swap (previously known as Freehaven) is based on [Monero](README_original.md)
 
+![Build-Linux](https://github.com/swap-dev/swap/workflows/Build-Linux/badge.svg)
+
 ## Production & Development
 
 Active Branches:
