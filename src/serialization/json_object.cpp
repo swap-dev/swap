@@ -269,19 +269,19 @@ void fromJsonValue(const rapidjson::Value& val, cryptonote::transaction& tx)
   GET_FROM_JSON_OBJECT(val, tx.rct_signatures, ringct);
 }
 
-void toJsonValue(rapidjson::Writer<epee::byte_stream>& dest, const cryptonote::block& b)
+void toJsonValue(rapidjson::Writer<epee::byte_stream>& val, const cryptonote::block& b)
 {
-  dest.StartObject();
+  val.StartObject();
 
-  INSERT_INTO_JSON_OBJECT(val, doc, major_version, b.major_version);
-  INSERT_INTO_JSON_OBJECT(val, doc, minor_version, b.minor_version);
-  INSERT_INTO_JSON_OBJECT(val, doc, timestamp, b.timestamp);
-  INSERT_INTO_JSON_OBJECT(val, doc, prev_id, b.prev_id);
-  INSERT_INTO_JSON_OBJECT(val, doc, nonce8, b.nonce8);
-  INSERT_INTO_JSON_OBJECT(val, doc, nonce, b.nonce);
-  INSERT_INTO_JSON_OBJECT(val, doc, cycle, b.cycle);
-  INSERT_INTO_JSON_OBJECT(val, doc, miner_tx, b.miner_tx);
-  INSERT_INTO_JSON_OBJECT(val, doc, tx_hashes, b.tx_hashes);
+  INSERT_INTO_JSON_OBJECT(val, major_version, b.major_version);
+  INSERT_INTO_JSON_OBJECT(val, minor_version, b.minor_version);
+  INSERT_INTO_JSON_OBJECT(val, timestamp, b.timestamp);
+  INSERT_INTO_JSON_OBJECT(val, prev_id, b.prev_id);
+  INSERT_INTO_JSON_OBJECT(val, nonce8, b.nonce8);
+  INSERT_INTO_JSON_OBJECT(val, nonce, b.nonce);
+  INSERT_INTO_JSON_OBJECT(val, cycle, b.cycle);
+  INSERT_INTO_JSON_OBJECT(val, miner_tx, b.miner_tx);
+  INSERT_INTO_JSON_OBJECT(val, tx_hashes, b.tx_hashes);
 
   val.EndObject();
 }
