@@ -724,7 +724,8 @@ void message_store::read_from_file(const multisig_wallet_state &state, const std
   {
     // Simply do nothing if the file is not there; allows e.g. easy recovery
     // from problems with the MMS by deleting the file
-    MERROR("No message store file found: " << filename);
+    // This error has a harmless fail-safe, so it was downgraded to warning to avoid confusing users. 
+    MWARNING("No message store file found: " << filename);
     return;
   }
 
