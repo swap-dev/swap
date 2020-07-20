@@ -42,9 +42,9 @@ BEGIN_INIT_SIMPLE_FUZZER()
   crypto::secret_key spendkey;
   epee::string_tools::hex_to_pod(spendkey_hex, spendkey);
 
-  wallet.init("", boost::none, boost::asio::ip::tcp::endpoint{}, 0, true, epee::net_utils::ssl_support_t::e_ssl_support_disabled);
-  wallet.set_subaddress_lookahead(1, 1);
-  wallet.generate("", "", spendkey, true, false);
+  wallet->init("", boost::none, "", 0, true, epee::net_utils::ssl_support_t::e_ssl_support_disabled);
+  wallet->set_subaddress_lookahead(1, 1);
+  wallet->generate("", "", spendkey, true, false);
 
   cryptonote::address_parse_info info;
   if (!cryptonote::get_account_address_from_str_or_url(info, cryptonote::TESTNET, "9uVsvEryzpN8WH2t1WWhFFCG5tS8cBNdmJYNRuckLENFimfauV5pZKeS1P2CbxGkSDTUPHXWwiYE5ZGSXDAGbaZgDxobqDN"))
