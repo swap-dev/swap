@@ -1282,7 +1282,6 @@ namespace cryptonote
             break;
           case relay_method::block:
           case relay_method::fluff:
-          case relay_method::stem:
             public_req.txs.push_back(std::move(std::get<1>(tx)));
             break;
         }
@@ -1294,9 +1293,9 @@ namespace cryptonote
          re-relaying public and private _should_ be acceptable here. */
       const boost::uuids::uuid source = boost::uuids::nil_uuid();
       if (!public_req.txs.empty())
-        get_protocol()->relay_transactions(public_req, source, epee::net_utils::zone::public_, relay_method::fluff);
+        get_protocol()->relay_transactions(public_req, source, epee::net_utils::zone::public_);
       if (!private_req.txs.empty())
-        get_protocol()->relay_transactions(private_req, source, epee::net_utils::zone::invalid, relay_method::local);
+        get_protocol()->relay_transactions(private_req, source, epee::net_utils::zone::invalid);
     }
     return true;
   }

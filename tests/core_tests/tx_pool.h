@@ -127,12 +127,3 @@ struct txpool_double_spend_keyimage : txpool_double_spend_base
 
   bool generate(std::vector<test_event_entry>& events) const;
 };
-
-struct txpool_stem_loop : txpool_double_spend_base
-{
-  txpool_stem_loop()
-    : txpool_double_spend_base()
-  {}
-
-  bool generate(std::vector<test_event_entry>& events) const;
-};

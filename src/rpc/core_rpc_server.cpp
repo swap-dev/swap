@@ -1178,7 +1178,7 @@ namespace cryptonote
       return true;
     }
 
-    if(tvc.m_relay == relay_method::none)
+    if(!tvc.m_should_be_relayed)
     {
       LOG_PRINT_L0("[on_send_raw_tx]: tx accepted, but not relayed");
       res.reason = "Not relayed";
@@ -1188,8 +1188,8 @@ namespace cryptonote
     }
 
     NOTIFY_NEW_TRANSACTIONS::request r;
-    r.txs.push_back(std::move(tx_blob));
-    m_core.get_protocol()->relay_transactions(r, boost::uuids::nil_uuid(), epee::net_utils::zone::invalid, relay_method::local);
+    r.txs.push_back(tx_blob);
+    m_core.get_protocol()->relay_transactions(r, boost::uuids::nil_uuid(), epee::net_utils::zone::invalid);
     //TODO: make sure that tx has reached other nodes here, probably wait to receive reflections from other nodes
     res.status = CORE_RPC_STATUS_OK;
     return true;
@@ -2819,8 +2819,8 @@ namespace cryptonote
       if (m_core.get_pool_transaction(txid, txblob, relay_category::legacy))
       {
         NOTIFY_NEW_TRANSACTIONS::request r;
-        r.txs.push_back(std::move(txblob));
-        m_core.get_protocol()->relay_transactions(r, boost::uuids::nil_uuid(), epee::net_utils::zone::invalid, relay_method::local);
+        r.txs.push_back(txblob);
+        m_core.get_protocol()->relay_transactions(r, boost::uuids::nil_uuid(), epee::net_utils::zone::invalid);
         //TODO: make sure that tx has reached other nodes here, probably wait to receive reflections from other nodes
       }
       else

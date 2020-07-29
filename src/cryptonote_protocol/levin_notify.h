@@ -35,7 +35,6 @@
 
 #include "byte_slice.h"
 #include "cryptonote_basic/blobdatatype.h"
-#include "cryptonote_protocol/enums.h"
 #include "cryptonote_protocol/fwd.h"
 #include "net/enums.h"
 #include "span.h"
@@ -123,7 +122,7 @@ namespace levin
           particular stem.
 
       \return True iff the notification is queued for sending. */
-    bool send_txs(std::vector<blobdata> txs, const boost::uuids::uuid& source, i_core_events& core, relay_method tx_relay);
+    bool send_txs(std::vector<blobdata> txs, const boost::uuids::uuid& source);
   };
 } // levin
 } // net

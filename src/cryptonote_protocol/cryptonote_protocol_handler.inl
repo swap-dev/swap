@@ -933,60 +933,29 @@ namespace cryptonote
       return 1;
     }
 
-    relay_method tx_relay;
-    std::vector<blobdata> stem_txs{};
-    std::vector<blobdata> fluff_txs{};
-    if (arg.dandelionpp_fluff)
+    std::vector<cryptonote::blobdata> newtxs;
+    newtxs.reserve(arg.txs.size());
+    for (size_t i = 0; i < arg.txs.size(); ++i)
     {
-      tx_relay = relay_method::fluff;
-      fluff_txs.reserve(arg.txs.size());
-    }
-    else
-    {
-      tx_relay = relay_method::stem;
-      stem_txs.reserve(arg.txs.size());
-    }
-
-    for (auto& tx : arg.txs)
-    {
-      tx_verification_context tvc{};
-      if (!m_core.handle_incoming_tx({tx, crypto::null_hash}, tvc, tx_relay, true))
+      cryptonote::tx_verification_context tvc{};
+      m_core.handle_incoming_tx({arg.txs[i], crypto::null_hash}, tvc, relay_method::fluff, true);
+      if(tvc.m_verifivation_failed)
       {
         LOG_PRINT_CCONTEXT_L1("Tx verification failed, dropping connection");
         drop_connection(context, false, false);
         return 1;
       }
-
-      switch (tvc.m_relay)
-      {
-        case relay_method::local:
-        case relay_method::stem:
-          stem_txs.push_back(std::move(tx));
-          break;
-        case relay_method::block:
-        case relay_method::fluff:
-          fluff_txs.push_back(std::move(tx));
-          break;
-        default:
-        case relay_method::none:
-          break;
-      }
+      if(tvc.m_should_be_relayed)
+        newtxs.push_back(std::move(arg.txs[i]));
     }
+    arg.txs = std::move(newtxs);
 
-    if (!stem_txs.empty())
+    if(arg.txs.size())
     {
       //TODO: add announce usage here
-      arg.dandelionpp_fluff = false;
-      arg.txs = std::move(stem_txs);
-      relay_transactions(arg, context.m_connection_id, context.m_remote_address.get_zone(), relay_method::stem);
+      relay_transactions(arg, context.m_connection_id, context.m_remote_address.get_zone());
     }
-    if (!fluff_txs.empty())
-    {
-      //TODO: add announce usage here
-      arg.dandelionpp_fluff = true;
-      arg.txs = std::move(fluff_txs);
-      relay_transactions(arg, context.m_connection_id, context.m_remote_address.get_zone(), relay_method::fluff);
-    }
+
     return 1;
   }
   //------------------------------------------------------------------------------------------------------------------------
@@ -2519,14 +2488,14 @@ skip:
   }
   //------------------------------------------------------------------------------------------------------------------------
   template<class t_core>
-  bool t_cryptonote_protocol_handler<t_core>::relay_transactions(NOTIFY_NEW_TRANSACTIONS::request& arg, const boost::uuids::uuid& source, epee::net_utils::zone zone, relay_method tx_relay)
+  bool t_cryptonote_protocol_handler<t_core>::relay_transactions(NOTIFY_NEW_TRANSACTIONS::request& arg, const boost::uuids::uuid& source, epee::net_utils::zone zone)
   {
     /* Push all outgoing transactions to this function. The behavior needs to
        identify how the transaction is going to be relayed, and then update the
        local mempool before doing the relay. The code was already updating the
        DB twice on received transactions - it is difficult to workaround this
        due to the internal design. */
-    return m_p2p->send_txs(std::move(arg.txs), zone, source, m_core, tx_relay) != epee::net_utils::zone::invalid;
+    return m_p2p->send_txs(std::move(arg.txs), zone, source, m_core) != epee::net_utils::zone::invalid;
   }
   //------------------------------------------------------------------------------------------------------------------------
   template<class t_core>
