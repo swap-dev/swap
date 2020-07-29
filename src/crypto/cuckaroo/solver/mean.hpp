@@ -11,7 +11,6 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <unistd.h> // sleep
-#include <x86intrin.h>
 #include <assert.h>
 #include <vector>
 #include <bitset>
