@@ -552,26 +552,36 @@ bool t_rpc_command_executor::show_status() {
 bool t_rpc_command_executor::mining_status() {
   cryptonote::COMMAND_RPC_MINING_STATUS::request mreq;
   cryptonote::COMMAND_RPC_MINING_STATUS::response mres;
+  cryptonote::COMMAND_RPC_HARD_FORK_INFO::request hfreq;
   cryptonote::COMMAND_RPC_HARD_FORK_INFO::response hfres;
   epee::json_rpc::error error_resp;
   bool has_mining_info = true;
 
   std::string fail_message = "Problem fetching info";
-
+  
+  hfreq.version = 0;
   bool mining_busy = false;
   if (m_is_rpc)
   {
+    if (!m_rpc_client->json_rpc_request(hfreq, hfres, "hard_fork_info", fail_message.c_str()))
+    {
+      return true;
+    }
     // mining info is only available non unrestricted RPC mode
     has_mining_info = m_rpc_client->rpc_request(mreq, mres, "/mining_status", fail_message.c_str());
   }
   else
   {
+    if (!m_rpc_server->on_hard_fork_info(hfreq, hfres, error_resp) || hfres.status != CORE_RPC_STATUS_OK)
+    {
+      tools::fail_msg_writer() << make_error(fail_message, hfres.status);
+      return true;
+    }
     if (!m_rpc_server->on_mining_status(mreq, mres))
     {
       tools::fail_msg_writer() << fail_message.c_str();
       return true;
     }
-
     if (mres.status == CORE_RPC_STATUS_BUSY)
     {
       mining_busy = true;
