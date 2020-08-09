@@ -1528,9 +1528,6 @@ namespace cryptonote
               std::string time_message = get_periodic_sync_estimate(current_blockchain_height, target_blockchain_height);
               if (!time_message.empty())
               {
-                uint64_t total_blocks_to_sync = target_blockchain_height - m_sync_start_height;
-                uint64_t total_blocks_synced = current_blockchain_height - m_sync_start_height;
-                progress_message += ", " + std::to_string(total_blocks_synced * 100 / total_blocks_to_sync) + "% of total synced";
                 progress_message += ", estimated " + time_message + " left";
               }
               progress_message += ")";
