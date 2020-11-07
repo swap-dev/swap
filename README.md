@@ -16,8 +16,6 @@ To contribute to the Swap Project, please make all pull requests to the _swap-v3
 For production, please use the _latest or tagged release_ of the _master_ branch.
 
 ## Resources
-- It is HIGHLY recommended that you join the #monero-dev IRC channel if you are developing software that uses Monero. Due to the nature of this open source software project, joining this channel and idling is the best way to stay updated on best practices and new developments in the Monero ecosystem. All you need to do is join the IRC channel and idle to stay updated with the latest in Monero development. If you do not, you risk wasting resources on developing integrations that are not compatible with the Monero network. The Monero core team and community continuously make efforts to communicate updates, developments, and documentation via other platforms – but for the best information, you need to talk to other Monero developers, and they are on IRC. #monero-dev is about Monero development, not getting help about using Monero, or help about development of other software, including yours, unless it also pertains to Monero code itself. For these cases, checkout #monero. 
-
 - Webpage: [xwp.one](https://xwp.one)
 - Explorer: [explorer.xwp.one](https://explorer.xwp.one)
 - Pool List: [miningpoolstats.stream/swap](https://miningpoolstats.stream/swap)
