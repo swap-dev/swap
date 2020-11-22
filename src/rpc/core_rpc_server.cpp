@@ -1149,6 +1149,10 @@ namespace cryptonote
         CHECK_CORE_READY();
       }
     }
+    else
+    {
+      CHECK_CORE_READY();
+    }
 
     CHECK_PAYMENT_MIN1(req, res, COST_PER_TX_RELAY, false);
 
