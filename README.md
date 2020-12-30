@@ -16,8 +16,8 @@ To contribute to the Swap Project, please make all pull requests to the _swap-v3
 For production, please use the _latest or tagged release_ of the _master_ branch.
 
 ## Resources
-- Webpage: [xwp.one](https://xwp.one)
-- Explorer: [explorer.xwp.one](https://explorer.xwp.one)
+- Webpage: [swap.foundation](https://swap.foundation)
+- Explorer: [explorer.swap.foundation](https://explorer.swap.foundation)
 - Pool List: [miningpoolstats.stream/swap](https://miningpoolstats.stream/swap)
 - GitHub: [github.com/swap-dev/swap](https://github.com/swap-dev/swap)
 
