@@ -1,4 +1,4 @@
-packages:=boost openssl zeromq sodium
+packages:=boost openssl zeromq libiconv expat ldns unbound
 
 native_packages := native_ccache
 
