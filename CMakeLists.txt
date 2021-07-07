@@ -368,7 +368,6 @@ if(NOT MANUAL_SUBMODULES)
     
     message(STATUS "Checking submodules")
     check_submodule(external/miniupnp)
-    check_submodule(external/unbound)
     check_submodule(external/rapidjson)
     check_submodule(external/trezor-common)    
   endif()
@@ -632,8 +631,7 @@ include_directories("${CMAKE_CURRENT_BINARY_DIR}/translations")
 add_subdirectory(external)
 
 # Final setup for libunbound
-include_directories(${UNBOUND_INCLUDE})
-link_directories(${UNBOUND_LIBRARY_DIRS})
+include_directories(${UNBOUND_INCLUDE_DIR})
 
 # Final setup for easylogging++
 include_directories(${EASYLOGGING_INCLUDE})
