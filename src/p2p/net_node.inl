@@ -603,24 +603,16 @@ namespace nodetool
     std::set<std::string> full_addrs;
     if (nettype == cryptonote::TESTNET)
     {
-      full_addrs.insert("seed-t.xwp.one:29949");
     }
     else if (nettype == cryptonote::STAGENET)
     {
-      full_addrs.insert("seed-s.xwp.one:39949");
     }
     else if (nettype == cryptonote::FAKECHAIN)
     {
     }
     else
     {
-      full_addrs.insert("58.185.155.109:19949"); // reeyon
-      full_addrs.insert("172.105.126.220:19949"); // SG
-      full_addrs.insert("176.58.102.113:19949");  // UK
-      full_addrs.insert("192.155.82.50:19949");   // CA
-      full_addrs.insert("seed1.xwp.one:19949");
-      full_addrs.insert("seed2.xwp.one:19949");
-      full_addrs.insert("seed3.xwp.one:19949");
+      full_addrs.insert("node.getswap.eu:19949");
     }
     return full_addrs;
   }
