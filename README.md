@@ -16,8 +16,8 @@ To contribute to the Swap Project, please make all pull requests to the _swap-v3
 For production, please use the _latest or tagged release_ of the _master_ branch.
 
 ## Resources
-- Webpage: [swap.foundation](https://swap.foundation)
-- Explorer: [explorer.swap.foundation](https://explorer.swap.foundation)
+- Webpage: [swap.foundation](https://getswap.eu)
+- Explorer: [explorer.swap.foundation](https://explorer.getswap.eu)
 - Pool List: [miningpoolstats.stream/swap](https://miningpoolstats.stream/swap)
 - GitHub: [github.com/swap-dev/swap](https://github.com/swap-dev/swap)
 
@@ -60,7 +60,7 @@ clone repo:
 
 build daemon and wallet:
 
-`cd swap && mkdir build && cd build && cmake .. && make daemon simplewallet`
+`cd swap && mkdir build && cd build && cmake .. && make daemon simplewallet`foundation
 
 or build everything:
 
