@@ -60,7 +60,7 @@ clone repo:
 
 build daemon and wallet:
 
-`cd swap && mkdir build && cd build && cmake .. && make daemon simplewallet`foundation
+`cd swap && mkdir build && cd build && cmake .. && make daemon simplewallet`
 
 or build everything:
 
