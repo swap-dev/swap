@@ -48,8 +48,7 @@ set(crypto_sources
   oaes_lib.c
   random.c
   skein.c
-  slow-hash.c
-  rx-slow-hash.c
+  slow-hash.c    
   CryptonightR_JIT.c
   tree-hash.c
   cn_slow_hash_soft.cpp
@@ -58,8 +57,6 @@ set(crypto_sources
 if(ARCH_ID STREQUAL "i386" OR ARCH_ID STREQUAL "x86_64" OR ARCH_ID STREQUAL "x86-64" OR ARCH_ID STREQUAL "amd64")
 list(APPEND crypto_sources CryptonightR_template.S)
 endif()
-
-include_directories(${RANDOMX_INCLUDE})
 
 set(crypto_headers)
 
@@ -106,8 +103,7 @@ monero_add_library(cncrypto
   ${crypto_private_headers})
 target_link_libraries(cncrypto
   PUBLIC
-    epee
-    randomx
+    epee    
     ${Boost_SYSTEM_LIBRARY}
     ${SODIUM_LIBRARY}
   PRIVATE
