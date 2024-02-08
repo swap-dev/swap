@@ -78,5 +78,8 @@ clone repo:
 
 build daemon and wallet:
 
-`cd swap && make release-static-win64`
+`cd swap && mkdir build && cd build`
 
+`cmake .. -G "MinGW Makefiles" -D STATIC=ON -D ARCH="x86-64" -D BUILD_64=ON -D CMAKE_BUILD_TYPE=Release -D BUILD_TAG="win-x64"`
+
+`mingw32-make`

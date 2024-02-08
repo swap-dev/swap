@@ -15,7 +15,7 @@ void Cuckaroo29S::setsipkeys(const unsigned char *keybuf,siphash_keys *keys) {
 }
 void Cuckaroo29S::setheader(const unsigned char *header, const uint32_t headerlen, siphash_keys *keys) {
 	unsigned char hdrkey[32];
-	blake2b((void *)hdrkey, sizeof(hdrkey), (const void *)header, headerlen, 0, 0);
+	blake2b_1((void *)hdrkey, sizeof(hdrkey), (const void *)header, headerlen, 0, 0);
 	setsipkeys(hdrkey,keys);
 }
 
@@ -146,9 +146,9 @@ int Cuckaroo29S::hash(const void* in, size_t len, uint32_t nonce, uint32_t *edge
 		unsigned char cyclehash[32];
 
 		blake2b_state S[1];
-		blake2b_init( S, 32 );
-		blake2b_update( S, ( const uint8_t * )hashdata, 116 );
-		blake2b_final( S, cyclehash, 32 );
+		blake2b_init_1( S, 32 );
+		blake2b_update_1( S, ( const uint8_t * )hashdata, 116 );
+		blake2b_final_1( S, cyclehash, 32 );
 	
 		for(int i = 0; i < 32; i++)
 			out2[i] = cyclehash[31-i];
