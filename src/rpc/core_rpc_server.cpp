@@ -1172,9 +1172,7 @@ namespace cryptonote
       return true;
     }
     res.sanity_check_failed = false;
-
-    const bool restricted = m_restricted && ctx;
-
+    
     tx_verification_context tvc{};
     if(!m_core.handle_incoming_tx({tx_blob, crypto::null_hash}, tvc, (req.do_not_relay ? relay_method::none : relay_method::local), false) || tvc.m_verifivation_failed)
     {
