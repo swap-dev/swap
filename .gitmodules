@@ -4,8 +4,7 @@
 	branch = monero
 [submodule "external/miniupnp"]
 	path = external/miniupnp
-	url = git@github.com:monero-project/miniupnp
-	branch = monero
+	url = git@github.com/miniupnp/miniupnp
 [submodule "external/rapidjson"]
 	path = external/rapidjson
 	url = git@github.com:Tencent/rapidjson
