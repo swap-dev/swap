@@ -1,9 +1,9 @@
 [submodule "external/miniupnp"]
 	path = external/miniupnp
-	url = git@github.com/miniupnp/miniupnp
+	url = https://github.com/miniupnp/miniupnp
 [submodule "external/rapidjson"]
 	path = external/rapidjson
-	url = git@github.com:Tencent/rapidjson
+	url = https://github.com/Tencent/rapidjson
 [submodule "external/trezor-common"]
 	path = external/trezor-common
-	url = git@github.com:trezor/trezor-common.git
+	url = https://github.com/trezor/trezor-common.git

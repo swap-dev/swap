@@ -1,6 +1,6 @@
 # Swap
 
-Copyright (c) 2014-2019 The Monero Project.   
+Copyright (c) 2014-2024 The Monero Project.   
 Swap (previously known as Freehaven) is based on [Monero](README_original.md)
 
 ![Build-Linux](https://github.com/swap-dev/swap/workflows/Build-Linux/badge.svg)
@@ -9,7 +9,7 @@ Swap (previously known as Freehaven) is based on [Monero](README_original.md)
 
 Active Branches:
 - Stable: master(latest/release)
-- Unstable: swap-v3.2dev(latest)
+- Unstable: swap-v3.3dev(latest)
 - Testing: N/A
 
 To contribute to the Swap Project, please make all pull requests to the _swap-v3.2dev_ branch.<br/>
