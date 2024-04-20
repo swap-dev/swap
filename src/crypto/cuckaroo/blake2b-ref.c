@@ -78,7 +78,7 @@ static void blake2b_init0( blake2b_state *S )
 }
 
 /* init xors IV with input parameter block */
-int blake2b_init_param( blake2b_state *S, const blake2b_param *P )
+int blake2b_init_param_1( blake2b_state *S, const blake2b_param *P )
 {
   const uint8_t *p = ( const uint8_t * )( P );
   size_t i;
@@ -95,7 +95,7 @@ int blake2b_init_param( blake2b_state *S, const blake2b_param *P )
 
 
 
-int blake2b_init( blake2b_state *S, size_t outlen )
+int blake2b_init_1( blake2b_state *S, size_t outlen )
 {
   blake2b_param P[1];
 
@@ -113,11 +113,11 @@ int blake2b_init( blake2b_state *S, size_t outlen )
   memset( P->reserved, 0, sizeof( P->reserved ) );
   memset( P->salt,     0, sizeof( P->salt ) );
   memset( P->personal, 0, sizeof( P->personal ) );
-  return blake2b_init_param( S, P );
+  return blake2b_init_param_1( S, P );
 }
 
 
-int blake2b_init_key( blake2b_state *S, size_t outlen, const void *key, size_t keylen )
+int blake2b_init_key_1( blake2b_state *S, size_t outlen, const void *key, size_t keylen )
 {
   blake2b_param P[1];
 
@@ -138,13 +138,13 @@ int blake2b_init_key( blake2b_state *S, size_t outlen, const void *key, size_t k
   memset( P->salt,     0, sizeof( P->salt ) );
   memset( P->personal, 0, sizeof( P->personal ) );
 
-  if( blake2b_init_param( S, P ) < 0 ) return -1;
+  if( blake2b_init_param_1( S, P ) < 0 ) return -1;
 
   {
     uint8_t block[BLAKE2B_BLOCKBYTES];
     memset( block, 0, BLAKE2B_BLOCKBYTES );
     memcpy( block, key, keylen );
-    blake2b_update( S, block, BLAKE2B_BLOCKBYTES );
+    blake2b_update_1( S, block, BLAKE2B_BLOCKBYTES );
     secure_zero_memory( block, BLAKE2B_BLOCKBYTES ); /* Burn the key from stack */
   }
   return 0;
@@ -218,7 +218,7 @@ static void blake2b_compress( blake2b_state *S, const uint8_t block[BLAKE2B_BLOC
 #undef G
 #undef ROUND
 
-int blake2b_update( blake2b_state *S, const void *pin, size_t inlen )
+int blake2b_update_1( blake2b_state *S, const void *pin, size_t inlen )
 {
   const unsigned char * in = (const unsigned char *)pin;
   if( inlen > 0 )
@@ -245,7 +245,7 @@ int blake2b_update( blake2b_state *S, const void *pin, size_t inlen )
   return 0;
 }
 
-int blake2b_final( blake2b_state *S, void *out, size_t outlen )
+int blake2b_final_1( blake2b_state *S, void *out, size_t outlen )
 {
   uint8_t buffer[BLAKE2B_OUTBYTES] = {0};
   size_t i;
@@ -270,7 +270,7 @@ int blake2b_final( blake2b_state *S, void *out, size_t outlen )
 }
 
 /* inlen, at least, should be uint64_t. Others can be size_t. */
-int blake2b( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen )
+int blake2b_1( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen )
 {
   blake2b_state S[1];
 
@@ -287,14 +287,14 @@ int blake2b( void *out, size_t outlen, const void *in, size_t inlen, const void 
 
   if( keylen > 0 )
   {
-    if( blake2b_init_key( S, outlen, key, keylen ) < 0 ) return -1;
+    if( blake2b_init_key_1( S, outlen, key, keylen ) < 0 ) return -1;
   }
   else
   {
-    if( blake2b_init( S, outlen ) < 0 ) return -1;
+    if( blake2b_init_1( S, outlen ) < 0 ) return -1;
   }
 
-  blake2b_update( S, ( const uint8_t * )in, inlen );
-  blake2b_final( S, out, outlen );
+  blake2b_update_1( S, ( const uint8_t * )in, inlen );
+  blake2b_final_1( S, out, outlen );
   return 0;
 }

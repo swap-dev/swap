@@ -23,6 +23,9 @@ SET(Readline_INCLUDE_DIR @prefix@/include)
 SET(Readline_LIBRARY @prefix@/lib/libreadline.a)
 SET(Terminfo_LIBRARY @prefix@/lib/libtinfo.a)
 
+SET(UNBOUND_INCLUDE_DIR @prefix@/include)
+SET(UNBOUND_LIBRARIES @prefix@/lib/libunbound.a)
+
 SET(LRELEASE_PATH @prefix@/native/bin CACHE FILEPATH "path to lrelease" FORCE)
 
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
@@ -55,7 +58,7 @@ SET(Boost_NO_SYSTEM_PATHS ON)
 SET(Boost_USE_STATIC_LIBS ON)
 SET(Boost_USE_STATIC_RUNTIME ON)
 
-SET(OpenSSL_DIR @prefix@/lib)
+SET(OPENSSL_ROOT_DIR @prefix@)
 SET(ARCHITECTURE @arch@)
 
 # for libraries and headers in the target directories

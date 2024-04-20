@@ -631,7 +631,7 @@ namespace cryptonote
   void get_altblock_longhash(const block& b, crypto::hash& res, const uint64_t main_height, const uint64_t height, const uint64_t seed_height, const crypto::hash& seed_hash)
   {
     blobdata bd = get_block_hashing_blob(b);
-    rx_slow_hash(main_height, seed_height, seed_hash.data, bd.data(), bd.size(), res.data, 0, 1);
+    //cn_slow_hash(main_height, seed_height, seed_hash.data, bd.data(), bd.size(), res.data, 0, 1);
   }
 
   bool get_block_longhash(const Blockchain *pbc, const block& b, crypto::hash& res, const uint64_t height, const int miners, cn_pow_hash_v3& ctx)
@@ -658,6 +658,6 @@ namespace cryptonote
 
   void get_block_longhash_reorg(const uint64_t split_height)
   {
-    rx_reorg(split_height);
+    //rx_reorg(split_height);
   }
 }

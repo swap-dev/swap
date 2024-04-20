@@ -168,7 +168,7 @@ int verify(word_t edges[PROOFSIZE], siphash_keys &keys) {
 void setheader(const char *header, const u32 headerlen, siphash_keys *keys) {
   char hdrkey[32];
   // SHA256((unsigned char *)header, headerlen, (unsigned char *)hdrkey);
-  blake2b((void *)hdrkey, sizeof(hdrkey), (const void *)header, headerlen, 0, 0);
+  blake2b_1((void *)hdrkey, sizeof(hdrkey), (const void *)header, headerlen, 0, 0);
   keys->setkeys(hdrkey);
 }
 

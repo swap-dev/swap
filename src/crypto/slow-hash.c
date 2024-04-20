@@ -1772,12 +1772,10 @@ void cn_slow_hash(const void *data, size_t length, char *hash, int variant, int 
 
 void slow_hash_allocate_state(void)
 {
-  cn_slow_hash_allocate_state();
-  rx_slow_hash_allocate_state();
+  cn_slow_hash_allocate_state();  
 }
 
 void slow_hash_free_state(void)
 {
-  cn_slow_hash_free_state();
-  rx_slow_hash_free_state();
+  cn_slow_hash_free_state();  
 }

@@ -148,11 +148,11 @@ extern "C" {
   int blake2s_update( blake2s_state *S, const void *in, size_t inlen );
   int blake2s_final( blake2s_state *S, void *out, size_t outlen );
 
-  int blake2b_init( blake2b_state *S, size_t outlen );
-  int blake2b_init_key( blake2b_state *S, size_t outlen, const void *key, size_t keylen );
-  int blake2b_init_param( blake2b_state *S, const blake2b_param *P );
-  int blake2b_update( blake2b_state *S, const void *in, size_t inlen );
-  int blake2b_final( blake2b_state *S, void *out, size_t outlen );
+  int blake2b_init_1( blake2b_state *S, size_t outlen );
+  int blake2b_init_key_1( blake2b_state *S, size_t outlen, const void *key, size_t keylen );
+  int blake2b_init_param_1( blake2b_state *S, const blake2b_param *P );
+  int blake2b_update_1( blake2b_state *S, const void *in, size_t inlen );
+  int blake2b_final_1( blake2b_state *S, void *out, size_t outlen );
 
   int blake2sp_init( blake2sp_state *S, size_t outlen );
   int blake2sp_init_key( blake2sp_state *S, size_t outlen, const void *key, size_t keylen );
@@ -177,7 +177,7 @@ extern "C" {
 
   /* Simple API */
   int blake2s( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen );
-  int blake2b( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen );
+  int blake2b_1( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen );
 
   int blake2sp( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen );
   int blake2bp( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen );

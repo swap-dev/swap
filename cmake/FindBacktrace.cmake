@@ -45,12 +45,15 @@ include(FindPackageHandleStandardArgs)
 set(_Backtrace_STD_ARGS Backtrace_INCLUDE_DIR)
 
 if(Backtrace_HEADER)
-  set(_Backtrace_HEADER_TRY "${Backtrace_HEADER}")
+  set(_Backtrace_HEADER_TRY "${Backtrace_HEADER}") 
 else(Backtrace_HEADER)
   set(_Backtrace_HEADER_TRY "execinfo.h")
 endif(Backtrace_HEADER)
 
 find_path(Backtrace_INCLUDE_DIR "${_Backtrace_HEADER_TRY}")
+      if(Backtrace_INCLUDE_DIR STREQUAL "Backtrace_INCLUDE_DIR-NOTFOUND")            
+find_path(Backtrace_INCLUDE_DIR "${backtrace}")
+      endif()
 set(Backtrace_INCLUDE_DIRS ${Backtrace_INCLUDE_DIR})
 
 if (NOT DEFINED Backtrace_LIBRARY)
@@ -72,13 +75,16 @@ else()
   # Check for external library, for non-glibc systems
   if(Backtrace_INCLUDE_DIR)
     # OpenBSD has libbacktrace renamed to libexecinfo
-    find_library(Backtrace_LIBRARY "execinfo")
+    find_library(Backtrace_LIBRARY "execinfo")    
+      if(Backtrace_LIBRARY STREQUAL "Backtrace_LIBRARY-NOTFOUND")
+      find_library(Backtrace_LIBRARY "backtrace")
+      endif()
   elseif()     # respect user wishes
     set(_Backtrace_HEADER_TRY "backtrace.h")
     find_path(Backtrace_INCLUDE_DIR ${_Backtrace_HEADER_TRY})
     find_library(Backtrace_LIBRARY "backtrace")
   endif()
-
+  
   # Prepend list with library path as it's more common practice
   set(_Backtrace_STD_ARGS Backtrace_LIBRARY ${_Backtrace_STD_ARGS})
 endif()
