@@ -72,7 +72,7 @@ namespace cryptonote
   {
   }
   //---------------------------------------------------------------------------
-  bool checkpoints::add_checkpoint(uint64_t height, const std::string& hash_str)
+  bool checkpoints::add_checkpoint(uint64_t height, const std::string& hash_str, const std::string& difficulty_str)
   {
     crypto::hash h = crypto::null_hash;
     bool r = epee::string_tools::hex_to_pod(hash_str, h);
@@ -84,6 +84,23 @@ namespace cryptonote
       CHECK_AND_ASSERT_MES(h == m_points[height], false, "Checkpoint at given height already exists, and hash for new checkpoint was different!");
     }
     m_points[height] = h;
+    if (!difficulty_str.empty())
+    {
+      try
+      {
+        difficulty_type difficulty(difficulty_str);
+        if (m_difficulty_points.count(height))
+        {
+          CHECK_AND_ASSERT_MES(difficulty == m_difficulty_points[height], false, "Difficulty checkpoint at given height already exists, and difficulty for new checkpoint was different!");
+        }
+        m_difficulty_points[height] = difficulty;
+      }
+      catch (...)
+      {
+        LOG_ERROR("Failed to parse difficulty checkpoint: " << difficulty_str);
+        return false;
+      }
+    }
     return true;
   }
   //---------------------------------------------------------------------------
@@ -143,6 +160,11 @@ namespace cryptonote
   {
     return m_points;
   }
+  //---------------------------------------------------------------------------
+  const std::map<uint64_t, difficulty_type>& checkpoints::get_difficulty_points() const
+  {
+    return m_difficulty_points;
+  }
 
   bool checkpoints::check_for_conflicts(const checkpoints& other) const
   {
@@ -166,35 +188,35 @@ namespace cryptonote
     {
       return true;
     }
-    ADD_CHECKPOINT(1,       "f48e334a588b89260bd75a1925df0f145751cda3025b713c73aa78232da3e4d6");
-    ADD_CHECKPOINT(100,     "3ecd27aded3269d142128aab5af78fc91c7fa2c7adf63e58844208b46fa83b58");
-    ADD_CHECKPOINT(10000,   "ee54ea5924ffa8677290620a6ddc865224ea8a297e7c08a10dbb62d156e2a1ec");
-    ADD_CHECKPOINT(50000,   "cc3e8c228df95fe3abedeb0339ef8ae425b592b6ce61ee853a87b8aad20b69b7");
-    ADD_CHECKPOINT(75000,   "d9a01e54ebc9fb720e326fcc10c9a7a83e64c339a038fb33e420e4d913aa0dce");
-    ADD_CHECKPOINT(100000,  "1d69279e55a88120db679e7ecceb5415424623422609d86f6a2fbdb892a55b93");
-    ADD_CHECKPOINT(110000,  "019d822a299f2c5c7acfc19b32649c3add8e0697ea6e1592d3c46cd2036ca2f3");
-    ADD_CHECKPOINT(150000,  "b9cbaa0bccd30478f26fe4f6177b66c010cbf2b589c9c44c82a9794bce5ed418");
-    ADD_CHECKPOINT(300000,  "85fce3b66fd8113aace405957b3459c54dd39d9b5eb6976ecdfec9e750399562");
-    ADD_CHECKPOINT(400000,  "1ed1e3fd9174be998ac4f446dcfc91080477a4a790acf5d199fc633b9d76af01");
-    ADD_CHECKPOINT(500000,  "4a5e0b52efa1b922e793d1d5b5f77930c55c19770b5f5e680ee816f5bc2a7c97");
-    ADD_CHECKPOINT(600000,  "0a42fe6a40f5b084fb63c77c0d76e9e274a78687397af5cc6bbb27a9458d9afb");
-    ADD_CHECKPOINT(700000,  "a0a62377dc0ea9d869b0c381ffe19b18ea0434bb720390f4bd57b509f252289d");
-    ADD_CHECKPOINT(800000,  "62207aad524bdcc3572f1e1d778a64bd571c90cc4f0c20fa48a59b30eac42ed8");
-    ADD_CHECKPOINT(1000000, "bd44362fdc5a0e3f83765fa26a85f0b395bb790e21ff25a9ed802cd8a94e91b4");
-    ADD_CHECKPOINT(1250000, "7a53910047eb12b347375b75213ed7b28656fccc76281002f759e676a7931396");
-    ADD_CHECKPOINT(1500000, "4c0a13efaa9f39e5e870621d39aaa7baf33c9c27a137a9a20d7ba57332a9f588");
-    ADD_CHECKPOINT(1750000, "a06ad4b21cd3b9d5544f62f77c3dd163dc240913252582dfc75fab829ab0d149");
-    ADD_CHECKPOINT(2000000, "2a5920d297d8e1e88bc0845d6b964c46009d78266258596c84dff446c9a1042c");
-    ADD_CHECKPOINT(2250000, "e58da5b896cb9e923a8daf7d7f7d670636d2fb8e9b8b7ae723b1ddfd09068e93");
-    ADD_CHECKPOINT(2500000, "70791ca10ff16168dca78076efa67f2153c4ff68fe5b92d100d16fca7966bfb3");
-    ADD_CHECKPOINT(2750000, "7b7106b23809716b4a9e0e6ee881fa6272ac15f2f42522d0666d4a6aa31aad78");
-    ADD_CHECKPOINT(3000000, "04f18897bb02bc6275069b6cb460d34ca7df011e6a913b5efec0557f8639086f");
-    ADD_CHECKPOINT(3250000, "5535b32b30fe6896de4c966962006bdc4a9fc706f3f4d31ec35cfa9edacbc41e");
-    ADD_CHECKPOINT(3500000, "551e50f2088bb66715a0ba3e8cc80af6d159d4f671426064382a74503eb0f4b3");
-    ADD_CHECKPOINT(3616348, "e833befdc5ccb515d2fc4337c314bfcece32887cbc6ec619770599ae02c13122");
-    ADD_CHECKPOINT(3619107, "b42aa409b05d7c0d399e67391b3f332f590dda2c92611bf82ea1850ccaabff2a");
-    ADD_CHECKPOINT(8618276, "bc3e927cb1b24893264554a655671b31d5e938204c3c25b13eb0c18594d07e80");
-    ADD_CHECKPOINT(13305079, "f8aa74925f361d4747d8d25a0cfd02960d15dc401bd7f4be621258b3119b6b9e")
+    ADD_CHECKPOINT2(1,       "f48e334a588b89260bd75a1925df0f145751cda3025b713c73aa78232da3e4d6","0x2");
+    ADD_CHECKPOINT2(100,     "3ecd27aded3269d142128aab5af78fc91c7fa2c7adf63e58844208b46fa83b58","0x3504B");
+    ADD_CHECKPOINT2(10000,   "ee54ea5924ffa8677290620a6ddc865224ea8a297e7c08a10dbb62d156e2a1ec","0x2712D3E7B");
+    ADD_CHECKPOINT2(50000,   "cc3e8c228df95fe3abedeb0339ef8ae425b592b6ce61ee853a87b8aad20b69b7","0x1F2F615B3EA");
+    ADD_CHECKPOINT2(75000,   "d9a01e54ebc9fb720e326fcc10c9a7a83e64c339a038fb33e420e4d913aa0dce","0x43BD58C6FEC");
+    ADD_CHECKPOINT2(100000,  "1d69279e55a88120db679e7ecceb5415424623422609d86f6a2fbdb892a55b93","0x6ACDF20304C");
+    ADD_CHECKPOINT2(110000,  "019d822a299f2c5c7acfc19b32649c3add8e0697ea6e1592d3c46cd2036ca2f3","0x77748FED217");
+    ADD_CHECKPOINT2(150000,  "b9cbaa0bccd30478f26fe4f6177b66c010cbf2b589c9c44c82a9794bce5ed418","0xA5AB15EEE01");
+    ADD_CHECKPOINT2(300000,  "85fce3b66fd8113aace405957b3459c54dd39d9b5eb6976ecdfec9e750399562","0x1529FF8C8905");
+    ADD_CHECKPOINT2(400000,  "1ed1e3fd9174be998ac4f446dcfc91080477a4a790acf5d199fc633b9d76af01","0x1AC1A7D1CCEB");
+    ADD_CHECKPOINT2(500000,  "4a5e0b52efa1b922e793d1d5b5f77930c55c19770b5f5e680ee816f5bc2a7c97","0x2034D7D86291");
+    ADD_CHECKPOINT2(600000,  "0a42fe6a40f5b084fb63c77c0d76e9e274a78687397af5cc6bbb27a9458d9afb","0x24F52E832797");
+    ADD_CHECKPOINT2(700000,  "a0a62377dc0ea9d869b0c381ffe19b18ea0434bb720390f4bd57b509f252289d","0x24F551CF20A0");
+    ADD_CHECKPOINT2(800000,  "62207aad524bdcc3572f1e1d778a64bd571c90cc4f0c20fa48a59b30eac42ed8","0x24F591211BE7");
+    ADD_CHECKPOINT2(1000000, "bd44362fdc5a0e3f83765fa26a85f0b395bb790e21ff25a9ed802cd8a94e91b4","0x24F601E4388B");
+    ADD_CHECKPOINT2(1250000, "7a53910047eb12b347375b75213ed7b28656fccc76281002f759e676a7931396","0x24F63CC490DE");
+    ADD_CHECKPOINT2(1500000, "4c0a13efaa9f39e5e870621d39aaa7baf33c9c27a137a9a20d7ba57332a9f588","0x24F6D4997FF4");
+    ADD_CHECKPOINT2(1750000, "a06ad4b21cd3b9d5544f62f77c3dd163dc240913252582dfc75fab829ab0d149","0x24F78B4023F1");
+    ADD_CHECKPOINT2(2000000, "2a5920d297d8e1e88bc0845d6b964c46009d78266258596c84dff446c9a1042c","0x24F7E904CEEC");
+    ADD_CHECKPOINT2(2250000, "e58da5b896cb9e923a8daf7d7f7d670636d2fb8e9b8b7ae723b1ddfd09068e93","0x24F837A95DA3");
+    ADD_CHECKPOINT2(2500000, "70791ca10ff16168dca78076efa67f2153c4ff68fe5b92d100d16fca7966bfb3","0x24F87E038F7C");
+    ADD_CHECKPOINT2(2750000, "7b7106b23809716b4a9e0e6ee881fa6272ac15f2f42522d0666d4a6aa31aad78","0x24F8AF51F7A2");
+    ADD_CHECKPOINT2(3000000, "04f18897bb02bc6275069b6cb460d34ca7df011e6a913b5efec0557f8639086f","0x24F8D34B21D0");
+    ADD_CHECKPOINT2(3250000, "5535b32b30fe6896de4c966962006bdc4a9fc706f3f4d31ec35cfa9edacbc41e","0x24F8EEC16082");
+    ADD_CHECKPOINT2(3500000, "551e50f2088bb66715a0ba3e8cc80af6d159d4f671426064382a74503eb0f4b3","0x24F909221282");
+    ADD_CHECKPOINT2(3616348, "e833befdc5ccb515d2fc4337c314bfcece32887cbc6ec619770599ae02c13122","0x24F911C83D1D");
+    ADD_CHECKPOINT2(3619107, "b42aa409b05d7c0d399e67391b3f332f590dda2c92611bf82ea1850ccaabff2a","0x24F911F345ED");
+    ADD_CHECKPOINT2(8618276, "bc3e927cb1b24893264554a655671b31d5e938204c3c25b13eb0c18594d07e80","0x24F97598B380");
+    ADD_CHECKPOINT2(13305079, "f8aa74925f361d4747d8d25a0cfd02960d15dc401bd7f4be621258b3119b6b9e","0x24F992DBF446")
     return true;
   }
 
