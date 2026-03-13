@@ -74,10 +74,12 @@
 #include "version.h"
 #include <stdexcept>
 #include "wallet/message_store.h"
+#include "QrCode.hpp"
 
 #ifdef WIN32
 #include <boost/locale.hpp>
 #include <boost/filesystem.hpp>
+#include <fcntl.h>
 #endif
 
 #ifdef HAVE_READLINE
@@ -126,7 +128,7 @@ typedef cryptonote::simple_wallet sw;
 
 #define SCOPED_WALLET_UNLOCK() SCOPED_WALLET_UNLOCK_ON_BAD_PASSWORD(return true;)
 
-#define PRINT_USAGE(usage_help) fail_msg_writer() << boost::format(tr("usage: %s")) % usage_help;
+#define PRINT_USAGE(usage_help_advanced) fail_msg_writer() << boost::format(tr("usage: %s")) % usage_help_advanced;
 
 #define LONG_PAYMENT_ID_SUPPORT_CHECK() \
   do { \
@@ -275,8 +277,10 @@ namespace
   const char* USAGE_RPC_PAYMENT_INFO("rpc_payment_info");
   const char* USAGE_START_MINING_FOR_RPC("start_mining_for_rpc");
   const char* USAGE_STOP_MINING_FOR_RPC("stop_mining_for_rpc");
+  const char* USAGE_SHOW_QR_CODE("show_qr_code [<subaddress_index>]");
   const char* USAGE_VERSION("version");
-  const char* USAGE_HELP("help [<command>]");
+  const char* USAGE_HELP("help [<command> | all]");
+  const char* USAGE_APROPOS("apropos <keyword> [<keyword> ...]");
 
   std::string input_line(const std::string& prompt, bool yesno = false)
   {
@@ -2393,6 +2397,62 @@ bool simple_wallet::stop_mining_for_rpc(const std::vector<std::string> &args)
   return true;
 }
 
+bool simple_wallet::show_qr_code(const std::vector<std::string> &args)
+{
+  uint32_t subaddress_index = 0;
+  if (args.size() >= 1)
+  {
+    if (!string_tools::get_xtype_from_string(subaddress_index, args[0]))
+    {
+      fail_msg_writer() << tr("invalid index: must be an unsigned integer");
+      return true;
+    }
+    if (subaddress_index >= m_wallet->get_num_subaddresses(m_current_subaddress_account))
+    {
+      fail_msg_writer() << tr("<subaddress_index> is out of bounds");
+      return true;
+    }
+  }
+
+#ifdef _WIN32
+#define PRINT_UTF8(pre, x) std::wcout << pre ## x
+#define WTEXTON() _setmode(_fileno(stdout), _O_WTEXT)
+#define WTEXTOFF() _setmode(_fileno(stdout), _O_TEXT)
+#else
+#define PRINT_UTF8(pre, x) std::cout << x
+#define WTEXTON()
+#define WTEXTOFF()
+#endif
+
+  WTEXTON();
+  try
+  {
+    const std::string address = "monero:" + m_wallet->get_subaddress_as_str({m_current_subaddress_account, subaddress_index});
+    const qrcodegen::QrCode qr = qrcodegen::QrCode::encodeText(address.c_str(), qrcodegen::QrCode::Ecc::LOW);
+    for (int y = -2; y < qr.getSize() + 2; y+=2)
+    {
+      for (int x = -2; x < qr.getSize() + 2; x++)
+      {
+        if (qr.getModule(x, y) && qr.getModule(x, y + 1))
+          PRINT_UTF8(L, "\u2588");
+        else if (qr.getModule(x, y) && !qr.getModule(x, y + 1))
+          PRINT_UTF8(L, "\u2580");
+        else if (!qr.getModule(x, y) && qr.getModule(x, y + 1))
+          PRINT_UTF8(L, "\u2584");
+        else
+          PRINT_UTF8(L, " ");
+      }
+      PRINT_UTF8(, std::endl);
+    }
+  }
+  catch (const std::length_error&)
+  {
+    fail_msg_writer() << tr("Failed to generate QR code, input too large");
+  }
+  WTEXTOFF();
+  return true;
+}
+
 bool simple_wallet::set_always_confirm_transfers(const std::vector<std::string> &args/* = std::vector<std::string>()*/)
 {
   const auto pwd_container = get_and_verify_password();
@@ -3036,9 +3096,57 @@ bool simple_wallet::set_export_format(const std::vector<std::string> &args/* = s
   return true;
 }
 
+bool simple_wallet::set_load_deprecated_formats(const std::vector<std::string> &args/* = std::vector<std::string()*/)
+{
+  if (args.size() < 2)
+  {
+    fail_msg_writer() << tr("Value not specified");
+    return true;
+  }
+
+  const auto pwd_container = get_and_verify_password();
+  if (pwd_container)
+  {
+    parse_bool_and_use(args[1], [&](bool r) {
+      m_wallet->load_deprecated_formats(r);
+      m_wallet->rewrite(m_wallet_file, pwd_container->password());
+
+      if (r)
+        message_writer() << tr("Warning: deprecated formats use boost serialization, which has buffer overflows and crashers. Only load deprecated formats from sources you trust.");
+    });
+  }
+  return true;
+}
+
 bool simple_wallet::help(const std::vector<std::string> &args/* = std::vector<std::string>()*/)
 {
   if(args.empty())
+  {
+    message_writer() << "";
+    message_writer() << tr("Important commands:");
+    message_writer() << "";
+    message_writer() << tr("\"welcome\" - Show welcome message.");
+    message_writer() << tr("\"help all\" - Show the list of all available commands.");
+    message_writer() << tr("\"help <command>\" - Show a command's documentation.");
+    message_writer() << tr("\"apropos <keyword>\" - Show commands related to a keyword.");
+    message_writer() << "";
+    message_writer() << tr("\"wallet_info\" - Show wallet main address and other info.");
+    message_writer() << tr("\"balance\" - Show balance.");
+    message_writer() << tr("\"address all\" - Show all addresses.");
+    message_writer() << tr("\"address new\" - Create new subaddress.");
+    message_writer() << tr("\"transfer <address> <amount>\" - Send XMR to an address.");
+    message_writer() << tr("\"show_transfers [in|out|pending|failed|pool]\" - Show transactions.");
+    message_writer() << tr("\"sweep_all <address>\" - Send whole balance to another wallet.");
+    message_writer() << tr("\"seed\" - Show secret 25 words that can be used to recover this wallet.");
+    message_writer() << tr("\"refresh\" - Synchronize wallet with the Monero network.");
+    message_writer() << tr("\"status\" - Check current status of wallet.");
+    message_writer() << tr("\"version\" - Check software version.");
+    message_writer() << tr("\"exit\" - Exit wallet.");
+    message_writer() << "";
+    message_writer() << tr("\"donate <amount>\" - Donate XMR to the development team.");
+    message_writer() << "";
+  }
+  else if ((args.size() == 1) && (args.front() == "all"))
   {
     success_msg_writer() << get_commands_str();
   }
@@ -3052,6 +3160,33 @@ bool simple_wallet::help(const std::vector<std::string> &args/* = std::vector<st
   {
     success_msg_writer() << get_command_usage(args);
   }
+  return true;
+}
+
+bool simple_wallet::apropos(const std::vector<std::string> &args)
+{
+  if (args.empty())
+  {
+    PRINT_USAGE(USAGE_APROPOS);
+    return true;
+  }
+  const std::vector<std::string>& command_list = m_cmd_binder.get_command_list(args);
+  if (command_list.empty())
+  {
+    fail_msg_writer() << tr("No commands found mentioning keyword(s)");
+    return true;
+  }
+
+  success_msg_writer() << "";
+  for(auto const& command:command_list)
+  {
+    std::vector<std::string> cmd;
+    cmd.push_back(command);
+    std::pair<std::string, std::string> documentation = m_cmd_binder.get_documentation(cmd);
+    success_msg_writer() << "  " << documentation.first;
+  }
+  success_msg_writer() << "";
+
   return true;
 }
 
@@ -3438,7 +3573,7 @@ simple_wallet::simple_wallet()
                               "<subcommand> is one of:\n"
                               "  init, info, signer, list, next, sync, transfer, delete, send, receive, export, note, show, set, help\n"
                               "  send_signer_config, start_auto_config, stop_auto_config, auto_config, config_checksum\n"
-                              "Get help about a subcommand with: help mms <subcommand>, or mms help <subcommand>"));
+                              "Get help about a subcommand with: help mms <subcommand>, or help mms <subcommand>"));
   m_cmd_binder.set_handler("mms init",
                            boost::bind(&simple_wallet::on_command, this, &simple_wallet::mms, _1),
                            tr(USAGE_MMS_INIT),
@@ -3592,10 +3727,18 @@ simple_wallet::simple_wallet()
                            boost::bind(&simple_wallet::on_command, this, &simple_wallet::stop_mining_for_rpc, _1),
                            tr(USAGE_STOP_MINING_FOR_RPC),
                            tr("Stop mining to pay for RPC access"));
+  m_cmd_binder.set_handler("show_qr_code",
+                           boost::bind(&simple_wallet::on_command, this, &simple_wallet::show_qr_code, _1),
+                           tr(USAGE_SHOW_QR_CODE),
+                           tr("Show address as QR code"));
   m_cmd_binder.set_handler("help",
                            boost::bind(&simple_wallet::on_command, this, &simple_wallet::help, _1),
                            tr(USAGE_HELP),
                            tr("Show the help section or the documentation about a <command>."));
+ m_cmd_binder.set_handler("apropos",
+                           boost::bind(&simple_wallet::on_command, this, &simple_wallet::apropos, _1),
+                           tr(USAGE_APROPOS),
+                           tr("Search all command descriptions for keyword(s)"));
   m_cmd_binder.set_unknown_command_handler(boost::bind(&simple_wallet::on_command, this, &simple_wallet::on_unknown_command, _1));
   m_cmd_binder.set_empty_command_handler(boost::bind(&simple_wallet::on_empty_command, this));
   m_cmd_binder.set_cancel_handler(boost::bind(&simple_wallet::on_cancelled_command, this));
@@ -3664,6 +3807,7 @@ bool simple_wallet::set_variable(const std::vector<std::string> &args)
     success_msg_writer() << "persistent-rpc-client-id = " << m_wallet->persistent_rpc_client_id();
     success_msg_writer() << "auto-mine-for-rpc-payment-threshold = " << m_wallet->auto_mine_for_rpc_payment_threshold();
     success_msg_writer() << "credits-target = " << m_wallet->credits_target();
+    success_msg_writer() << "load-deprecated-formats = " << m_wallet->load_deprecated_formats();
     return true;
   }
   else
@@ -3725,6 +3869,7 @@ bool simple_wallet::set_variable(const std::vector<std::string> &args)
     CHECK_SIMPLE_VARIABLE("setup-background-mining", set_setup_background_mining, tr("1/yes or 0/no"));
     CHECK_SIMPLE_VARIABLE("device-name", set_device_name, tr("<device_name[:device_spec]>"));
     CHECK_SIMPLE_VARIABLE("export-format", set_export_format, tr("\"binary\" or \"ascii\""));
+    CHECK_SIMPLE_VARIABLE("load-deprecated-formats", set_load_deprecated_formats, tr("0 or 1"));
     CHECK_SIMPLE_VARIABLE("persistent-rpc-client-id", set_persistent_rpc_client_id, tr("0 or 1"));
     CHECK_SIMPLE_VARIABLE("auto-mine-for-rpc-payment-threshold", set_auto_mine_for_rpc_payment_threshold, tr("floating point >= 0"));
     CHECK_SIMPLE_VARIABLE("credits-target", set_credits_target, tr("unsigned integer"));
@@ -4747,9 +4892,10 @@ boost::optional<epee::wipeable_string> simple_wallet::new_wallet(const boost::pr
     "**********************************************************************\n" <<
     tr("Your wallet has been generated!\n"
     "To start synchronizing with the daemon, use the \"refresh\" command.\n"
-    "Use the \"help\" command to see the list of available commands.\n"
+    "Use the \"help\" command to see a simplified list of available commands.\n"
+    "Use \"help all\" command to see the list of all available commands.\n"
     "Use \"help <command>\" to see a command's documentation.\n"
-    "Always use the \"exit\" command when closing swap-wallet-cli to save \n"
+    "Always use the \"exit\" command when closing monero-wallet-cli to save \n"
     "your current session's state. Otherwise, you might need to synchronize \n"
     "your wallet again (your wallet keys are NOT at risk in any case).\n")
   ;
@@ -5007,7 +5153,8 @@ boost::optional<epee::wipeable_string> simple_wallet::open_wallet(const boost::p
   }
   success_msg_writer() <<
     "**********************************************************************\n" <<
-    tr("Use the \"help\" command to see the list of available commands.\n") <<
+    tr("Use the \"help\" command to see a simplified list of available commands.\n") <<
+    tr("Use \"help all\" to see the list of all available commands.\n") <<
     tr("Use \"help <command>\" to see a command's documentation.\n") <<
     "**********************************************************************";
   return password;
@@ -6223,7 +6370,7 @@ void simple_wallet::check_for_inactivity_lock(bool user)
     m_in_command = true;
     if (!user)
     {
-      const std::string speech = tr("I locked your Swap wallet to protect you while you were away\nsee \"help set\" to configure/disable");
+      const std::string speech = tr("I locked your Monero wallet to protect you while you were away\nsee \"help set\" to configure/disable");
       std::vector<std::pair<std::string, size_t>> lines = tools::split_string_by_width(speech, 45);
 
       size_t max_len = 0;
@@ -10585,7 +10732,7 @@ void simple_wallet::show_message(const mms::message &m)
   case mms::message_type::additional_key_set:
   case mms::message_type::note:
     display_content = true;
-    ms.get_sanitized_text(m.content, 1000, sanitized_text);
+    sanitized_text = mms::message_store::get_sanitized_text(m.content, 1000);
     break;
   default:
     display_content = false;
@@ -11197,7 +11344,7 @@ void simple_wallet::mms_help(const std::vector<std::string> &args)
 {
   if (args.size() > 1)
   {
-    fail_msg_writer() << tr("Usage: mms help [<subcommand>]");
+    fail_msg_writer() << tr("Usage: help mms [<subcommand>]");
     return;
   }
   std::vector<std::string> help_args;
