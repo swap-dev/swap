@@ -603,9 +603,11 @@ namespace nodetool
     std::set<std::string> full_addrs;
     if (nettype == cryptonote::TESTNET)
     {
+      full_addrs.insert("testnet.node.getswap.eu:29949");
     }
     else if (nettype == cryptonote::STAGENET)
     {
+      full_addrs.insert("stagenet.node.getswap.eu:39949");
     }
     else if (nettype == cryptonote::FAKECHAIN)
     {
@@ -613,6 +615,7 @@ namespace nodetool
     else
     {
       full_addrs.insert("node.getswap.eu:19949");
+      full_addrs.insert("node2.getswap.eu:19949");
     }
     return full_addrs;
   }
