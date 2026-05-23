@@ -84,7 +84,7 @@ cache:
           Compress-Archive -Path "build\bin\*" -DestinationPath $archiveName -Force
           
           $headers = @{ "JOB-TOKEN" = "$env:CI_JOB_TOKEN" }
-          $uploadUrl = "${env:env:CI_API_V4_URL}/projects/${env:CI_PROJECT_ID}/packages/generic/swap/$env:CI_COMMIT_TAG/$archiveName"
+          $uploadUrl = "$env:CI_API_V4_URL/projects/$env:CI_PROJECT_ID/packages/generic/swap/$env:CI_COMMIT_TAG/$archiveName"
           Invoke-RestMethod -Uri $uploadUrl -Method Put -InFile $archiveName -Headers $headers
         } else {
           Write-Warning "=========================================================="
