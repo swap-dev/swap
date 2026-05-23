@@ -1,0 +1,140 @@
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_TAG
+    
+    - when: never
+
+stages:
+  - build
+
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+  CXXFLAGS: "-g0 -O3"
+  CCACHE_DIR: "$CI_PROJECT_DIR/.ccache"
+
+cache:
+  key: "$CI_JOB_NAME-$CI_COMMIT_REF_SLUG"
+  paths:
+    - .ccache/
+
+.build-linux-base:
+  image:
+    name: container-registry.aurora-interactive.online/swap-dev/swap/build-swap:linux
+    pull_policy: if-not-present
+  script:
+    - mkdir build && cd build
+    - cmake .. -DSTATIC=ON -DARCH="x86-64" -DBUILD_64=ON -DCMAKE_BUILD_TYPE=Release -DSTACK_TRACE=OFF -DUSE_DEVICE_TREZOR=OFF -DCMAKE_EXE_LINKER_FLAGS="-static" -DUPNPC_BUILD_SHARED=OFF -DUPNPC_BUILD_TESTS=OFF -DUPNPC_BUILD_SAMPLE=OFF -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+    - make -j4
+    - cd ..
+    - mkdir -p dist
+    - cp build/bin/* dist/
+
+    - |
+      if [ -n "$CI_COMMIT_TAG" ]; then
+        if [[ "$CI_COMMIT_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          echo "=========================================================="
+          echo "SUCCESS: Valid release tag format detected ($CI_COMMIT_TAG)."
+          echo "Compiling non-nested production archive..."
+          echo "=========================================================="
+          
+          tar -czf "swap-linux-static-${CI_COMMIT_TAG}.tar.gz" -C build/bin .
+          
+          # Stream binary file directly to Generic Package Registry
+          curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" \
+               --upload-file "swap-linux-static-${CI_COMMIT_TAG}.tar.gz" \
+               "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/swap/${CI_COMMIT_TAG}/swap-linux-static-${CI_COMMIT_TAG}.tar.gz"
+        else
+          echo "=========================================================="
+          echo "WARNING: Invalid tag name format '$CI_COMMIT_TAG'."
+          echo "Tags must strictly follow 'vX.Y.Z' (e.g. v1.2.3)."
+          echo "Skipping permanent Package Registry upload."
+          echo "=========================================================="
+        fi
+      fi
+
+.build-windows-base:
+  image:
+    name: container-registry.aurora-interactive.online/swap-dev/swap/build-swap:windows
+    pull_policy: if-not-present
+  tags:
+    - windows
+    - docker
+  script:
+    - |
+      $env:CHERE_INVOKING = "yes"
+      $env:MSYSTEM = "MINGW64"
+      
+      C:\msys64\usr\bin\bash.exe -lc "sed -i 's/cmake_minimum_required(VERSION .*)/cmake_minimum_required(VERSION 3.5)/' translations/CMakeLists.txt"
+      C:\msys64\usr\bin\bash.exe -lc "mkdir -p build && cd build && cmake .. -G 'MSYS Makefiles' -DSTATIC=ON -DARCH=x86-64 -DBUILD_64=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_TAG='win-x64' -DSTACK_TRACE=OFF -DUSE_DEVICE_TREZOR=OFF -DBOOST_ROOT=/opt/build_deps/boost_1_83_0 -DBOOST_LIBRARYDIR=/opt/build_deps/boost_1_83_0/stage/lib -DBoost_USE_STATIC_LIBS=ON -DBoost_USE_STATIC_RUNTIME=ON -DWARNINGS_AS_ERRORS=OFF -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache"
+      C:\msys64\usr\bin\bash.exe -lc "cd build && make -j4"
+      
+      New-Item -ItemType Directory -Force -Path dist
+      Copy-Item -Path "build\bin\*.exe" -Destination "dist\" -Force
+
+      if ($env:CI_COMMIT_TAG) {
+        if ($env:CI_COMMIT_TAG -match '^v\d+\.\d+\.\d+$') {
+          Write-Output "=========================================================="
+          Write-Output "SUCCESS: Valid release tag format detected ($env:CI_COMMIT_TAG)."
+          Write-Output "Compiling non-nested production archive..."
+          Write-Output "=========================================================="
+          
+          $archiveName = "swap-windows-static-$env:CI_COMMIT_TAG.zip"
+          Compress-Archive -Path "build\bin\*" -DestinationPath $archiveName -Force
+          
+          $headers = @{ "JOB-TOKEN" = "$env:CI_JOB_TOKEN" }
+          $uploadUrl = "${env:env:CI_API_V4_URL}/projects/${env:CI_PROJECT_ID}/packages/generic/swap/$env:CI_COMMIT_TAG/$archiveName"
+          Invoke-RestMethod -Uri $uploadUrl -Method Put -InFile $archiveName -Headers $headers
+        } else {
+          Write-Warning "=========================================================="
+          Write-Warning "WARNING: Invalid tag name format '$env:CI_COMMIT_TAG'."
+          Write-Warning "Tags must strictly follow 'vX.Y.Z' (e.g. v1.2.3)."
+          Write-Warning "Skipping permanent Package Registry upload."
+          Write-Warning "=========================================================="
+        }
+      }
+
+linux-branch:
+  extends: .build-linux-base
+  stage: build
+  rules:
+    - if: $CI_COMMIT_TAG == null
+  artifacts:
+    name: "swap-linux-branch"
+    paths:
+      - dist/
+    expire_in: 1 week
+
+windows-branch:
+  extends: .build-windows-base
+  stage: build
+  rules:
+    - if: $CI_COMMIT_TAG == null
+  artifacts:
+    name: "swap-windows-branch"
+    paths:
+      - dist/
+    expire_in: 1 week
+
+linux-tag:
+  extends: .build-linux-base
+  stage: build
+  rules:
+    - if: $CI_COMMIT_TAG
+  artifacts:
+    name: "swap-linux-tag-fallback"
+    paths:
+      - dist/
+    expire_in: 1 week
+
+windows-tag:
+  extends: .build-windows-base
+  stage: build
+  rules:
+    - if: $CI_COMMIT_TAG
+  artifacts:
+    name: "swap-windows-tag-fallback"
+    paths:
+      - dist/
+    expire_in: 1 week

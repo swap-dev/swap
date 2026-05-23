@@ -96,17 +96,25 @@ if(Protobuf_FOUND AND USE_DEVICE_TREZOR AND TREZOR_PYTHON)
         message(STATUS "Protobuf test generation failed: ${OUT} ${ERR}")
     endif()
 
-    try_compile(Protobuf_COMPILE_TEST_PASSED
-        "${CMAKE_BINARY_DIR}"
-        SOURCES
-        "${CMAKE_BINARY_DIR}/test-protobuf.pb.cc"
-        "${CMAKE_SOURCE_DIR}/cmake/test-protobuf.cpp"
-        CMAKE_FLAGS
-        "-DINCLUDE_DIRECTORIES=${Protobuf_INCLUDE_DIR};${CMAKE_BINARY_DIR}"
-        "-DCMAKE_CXX_STANDARD=11"
-        LINK_LIBRARIES ${Protobuf_LIBRARY}
-        OUTPUT_VARIABLE OUTPUT
-    )
+    # Build argument list dynamically for the try_compile source signature
+    set(TRY_COMPILE_ARGS
+         "${CMAKE_BINARY_DIR}"
+         SOURCES
+         "${CMAKE_BINARY_DIR}/test-protobuf.pb.cc"
+         "${CMAKE_SOURCE_DIR}/cmake/test-protobuf.cpp"
+         CMAKE_FLAGS
+         "-DINCLUDE_DIRECTORIES=${Protobuf_INCLUDE_DIR}\;${CMAKE_BINARY_DIR}"
+         "-DCMAKE_CXX_STANDARD=17"
+         LINK_LIBRARIES ${Protobuf_LIBRARY}
+         OUTPUT_VARIABLE OUTPUT
+     )
+
+    if(UNIX AND NOT APPLE)
+        list(APPEND TRY_COMPILE_ARGS LINK_OPTIONS "-Wl,--copy-dt-needed-entries")
+    endif()
+
+    try_compile(Protobuf_COMPILE_TEST_PASSED ${TRY_COMPILE_ARGS})
+
     if(NOT Protobuf_COMPILE_TEST_PASSED)
         message(STATUS "Protobuf Compilation test failed: ${OUTPUT}.")
     endif()
